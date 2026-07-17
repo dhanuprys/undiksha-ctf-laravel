@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
+use App\Enums\ChallengeLevel;
 
-class Team extends Model
+class Challenge extends Model
 {
     use HasFactory, LogsActivity;
 
@@ -18,18 +19,31 @@ class Team extends Model
 
     protected $fillable = [
         'event_id',
-        'name',
-        'join_code',
+        'category_id',
+        'title',
+        'description',
+        'base_score',
+        'difficulty',
+        'flag',
+        'is_active',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'difficulty' => ChallengeLevel::class,
+        ];
+    }
 
     public function event()
     {
         return $this->belongsTo(Event::class);
     }
 
-    public function users()
+    public function category()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function submissions()

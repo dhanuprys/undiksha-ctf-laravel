@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
-class Team extends Model
+class Category extends Model
 {
     use HasFactory, LogsActivity;
 
@@ -17,23 +17,12 @@ class Team extends Model
     }
 
     protected $fillable = [
-        'event_id',
         'name',
-        'join_code',
+        'description',
     ];
 
-    public function event()
+    public function challenges()
     {
-        return $this->belongsTo(Event::class);
-    }
-
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
-
-    public function submissions()
-    {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(Challenge::class);
     }
 }

@@ -26,10 +26,10 @@
             title: 'Keamanan',
             href: editSecurity(),
         },
-        {
-            title: 'Tampilan',
-            href: editAppearance(),
-        },
+        // {
+        //     title: 'Tampilan',
+        //     href: editAppearance(),
+        // },
     ];
 
     const url = currentUrlState();

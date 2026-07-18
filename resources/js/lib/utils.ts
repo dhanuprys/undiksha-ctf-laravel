@@ -12,3 +12,6 @@ export function toUrl(
 ): string {
     return typeof href === 'string' ? href : href.url;
 }
+
+export type WithoutChildren<T> = Omit<T, 'children'>;
+export type WithoutChildrenOrChild<T> = Omit<T, 'children' | 'child'>;

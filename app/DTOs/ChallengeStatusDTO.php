@@ -12,6 +12,5 @@ class ChallengeStatusDTO
         public string $difficulty,
         public bool $isSolvedByTeam,
         public bool $isFirstBlood
-    ) {
-    }
+    ) {}
 }

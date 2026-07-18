@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\ChallengeAttachment;
+use App\Models\Event;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class AttachmentController extends Controller
+{
+    public function download(Request $request, ChallengeAttachment $attachment)
+    {
+        $user = $request->user();
+        $activeEvent = Event::where('is_active', true)->first();
+
+        if (! $activeEvent) {
+            abort(404);
+        }
+
+        if (now()->lt($activeEvent->start_time)) {
+            abort(403, 'Kompetisi belum dimulai.');
+        }
+
+        $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();
+        if (! $currentTeam) {
+            abort(403, 'Anda belum bergabung dalam tim.');
+        }
+
+        // Validate attachment belongs to an active challenge in the active event
+        $attachment->load('challenge');
+        if ($attachment->challenge->event_id !== $activeEvent->id || ! $attachment->challenge->is_active) {
+            abort(404);
+        }
+
+        if (! Storage::disk('public')->exists($attachment->file_path)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        $attachment->increment('download_count');
+
+        return Storage::disk('public')->download($attachment->file_path, $attachment->file_name);
+    }
+}

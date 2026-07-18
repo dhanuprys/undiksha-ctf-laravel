@@ -23,11 +23,11 @@
             href: editProfile(),
         },
         {
-            title: 'Security',
+            title: 'Keamanan',
             href: editSecurity(),
         },
         {
-            title: 'Appearance',
+            title: 'Tampilan',
             href: editAppearance(),
         },
     ];
@@ -37,8 +37,8 @@
 
 <div class="px-4 py-6">
     <Heading
-        title="Settings"
-        description="Manage your profile and account settings"
+        title="Pengaturan"
+        description="Atur preferensi untuk akun Anda"
     />
 
     <div class="flex flex-col lg:flex-row lg:space-x-12">

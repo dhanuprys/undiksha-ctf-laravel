@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,11 +36,23 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
+        $activeEvent = Event::where('is_active', true)->first();
+
+        $currentTeam = null;
+        if ($user && $activeEvent && ! $user->isAdmin()) {
+            $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'activeEvent' => $activeEvent,
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? array_merge($user->toArray(), [
+                    'current_team' => $currentTeam,
+                ]) : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

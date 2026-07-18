@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Models\Challenge;
+use App\Models\Setting;
 use App\Models\Submission;
 use App\Models\Team;
-use App\Models\Setting;
-use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ScoringService
 {
@@ -15,11 +15,6 @@ class ScoringService
      * Submit a flag for a challenge.
      * Handles race conditions using database locks.
      *
-     * @param Team $team
-     * @param Challenge $challenge
-     * @param int $userId
-     * @param string $flag
-     * @return Submission
      * @throws Exception
      */
     public function submitFlag(Team $team, Challenge $challenge, int $userId, string $flag): Submission
@@ -38,7 +33,7 @@ class ScoringService
                     ->exists();
 
                 if ($alreadySolved) {
-                    throw new Exception("Tantangan ini sudah diselesaikan oleh tim Anda.");
+                    throw new Exception('Tantangan ini sudah diselesaikan oleh tim Anda.');
                 }
 
                 $points = $this->calculateCorrectPoints($lockedChallenge);
@@ -71,12 +66,12 @@ class ScoringService
         $degradationRate = Setting::where('event_id', $challenge->event_id)
             ->where('key', 'degradation_rate')
             ->value('value');
-            
+
         // Default to 10% if not configured
         $degradationRate = $degradationRate !== null ? (float) $degradationRate : 0.10;
-        
+
         $multiplier = pow(1 - $degradationRate, $solvedCount);
-        
+
         return (int) round($challenge->base_score * $multiplier);
     }
 
@@ -88,10 +83,10 @@ class ScoringService
         $penalty = Setting::where('event_id', $eventId)
             ->where('key', 'penalty_deduction')
             ->value('value');
-            
+
         // Default to 0 penalty if not configured
         $penalty = $penalty !== null ? (int) $penalty : 0;
-        
+
         return -1 * abs($penalty);
     }
 }

@@ -98,7 +98,7 @@ class ChallengeForm
 
                         Tabs\Tab::make('Lampiran')
                             ->icon('heroicon-o-paper-clip')
-                            ->badge(fn (?array $state): ?string => filled($state) ? count($state) : null)
+                            ->badge(fn (\Filament\Schemas\Components\Utilities\Get $get): ?string => count($get('attachments') ?? []) ?: null)
                             ->schema([
                                 Placeholder::make('attachments_info')
                                     ->content('Tambahkan file pendukung seperti binary, pcap, gambar, atau file lain yang diperlukan peserta untuk menyelesaikan tantangan.')
@@ -114,7 +114,7 @@ class ChallengeForm
                                             ->placeholder('challenge.zip'),
                                         FileUpload::make('file_path')
                                             ->label('File')
-                                            ->disk('private')
+                                            ->disk('local')
                                             ->directory('challenge-attachments')
                                             ->visibility('private')
                                             ->required(),

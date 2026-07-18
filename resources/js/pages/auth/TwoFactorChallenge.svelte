@@ -18,18 +18,18 @@
     const authConfigContent: TwoFactorConfigContent = $derived.by(() => {
         if (showRecoveryInput) {
             return {
-                title: 'Recovery code',
+                title: 'Kode pemulihan',
                 description:
-                    'Please confirm access to your account by entering one of your emergency recovery codes.',
-                buttonText: 'login using an authentication code',
+                    'Harap konfirmasi akses ke akun Anda dengan memasukkan salah satu kode pemulihan darurat Anda.',
+                buttonText: 'masuk menggunakan kode autentikasi',
             };
         }
 
         return {
-            title: 'Authentication code',
+            title: 'Kode autentikasi',
             description:
-                'Enter the authentication code provided by your authenticator application.',
-            buttonText: 'login using a recovery code',
+                'Masukkan kode autentikasi yang diberikan oleh aplikasi autentikator Anda.',
+            buttonText: 'masuk menggunakan kode pemulihan',
         };
     });
 
@@ -47,7 +47,7 @@
     }
 </script>
 
-<AppHead title="Two-factor authentication" />
+<AppHead title="Autentikasi dua faktor" />
 
 <div class="space-y-6">
     {#if !showRecoveryInput}
@@ -80,10 +80,10 @@
                     <InputError message={errors.code} />
                 </div>
                 <Button type="submit" class="w-full" disabled={processing}
-                    >Continue</Button
+                    >Lanjutkan</Button
                 >
                 <div class="text-center text-sm text-muted-foreground">
-                    <span>or you can </span>
+                    <span>atau Anda bisa </span>
                     <button
                         type="button"
                         class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
@@ -100,16 +100,16 @@
                 <Input
                     name="recovery_code"
                     type="text"
-                    placeholder="Enter recovery code"
+                    placeholder="Masukkan kode pemulihan"
                     required
                 />
                 <InputError message={errors.recovery_code} />
                 <Button type="submit" class="w-full" disabled={processing}
-                    >Continue</Button
+                    >Lanjutkan</Button
                 >
 
                 <div class="text-center text-sm text-muted-foreground">
-                    <span>or you can </span>
+                    <span>atau Anda bisa </span>
                     <button
                         type="button"
                         class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"

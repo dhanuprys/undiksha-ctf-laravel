@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Submission;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -60,7 +61,7 @@ class LeaderboardController extends Controller
                 ],
                 'total_score' => $team->score,
                 'solved_count' => $team->solved_count,
-                'last_solve_time' => $team->last_solve_time ? \Carbon\Carbon::parse($team->last_solve_time)->toIso8601String() : null,
+                'last_solve_time' => $team->last_solve_time ? Carbon::parse($team->last_solve_time)->toIso8601String() : null,
                 'is_current_team' => $team->id === $currentTeamId,
             ];
         });
@@ -73,22 +74,22 @@ class LeaderboardController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        $eventStartTime = $activeEvent->start_time ? \Carbon\Carbon::parse($activeEvent->start_time)->toIso8601String() : null;
+        $eventStartTime = $activeEvent->start_time ? Carbon::parse($activeEvent->start_time)->toIso8601String() : null;
 
         // Predefined distinct colors for top 10 teams
         $colors = [
-            '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', 
-            '#06b6d4', '#3b82f6', '#6366f1', '#a855f7', '#ec4899'
+            '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e',
+            '#06b6d4', '#3b82f6', '#6366f1', '#a855f7', '#ec4899',
         ];
 
         $graphData = [];
-        
+
         foreach ($top10Teams as $index => $entry) {
             $teamId = $entry['team']['id'];
             $teamSubmissions = $submissions->where('team_id', $teamId);
-            
+
             $dataPoints = [];
-            
+
             if ($eventStartTime) {
                 $dataPoints[] = [
                     'x' => $eventStartTime,
@@ -105,7 +106,7 @@ class LeaderboardController extends Controller
                 ];
             }
 
-            if (!empty($dataPoints)) {
+            if (! empty($dataPoints)) {
                 $dataPoints[] = [
                     'x' => now()->toIso8601String(),
                     'y' => $cumulativeScore,

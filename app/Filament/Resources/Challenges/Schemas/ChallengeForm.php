@@ -13,6 +13,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class ChallengeForm
@@ -98,7 +99,7 @@ class ChallengeForm
 
                         Tabs\Tab::make('Lampiran')
                             ->icon('heroicon-o-paper-clip')
-                            ->badge(fn (\Filament\Schemas\Components\Utilities\Get $get): ?string => count($get('attachments') ?? []) ?: null)
+                            ->badge(fn (Get $get): ?string => count($get('attachments') ?? []) ?: null)
                             ->schema([
                                 Placeholder::make('attachments_info')
                                     ->content('Tambahkan file pendukung seperti binary, pcap, gambar, atau file lain yang diperlukan peserta untuk menyelesaikan tantangan.')

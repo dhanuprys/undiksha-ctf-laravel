@@ -61,7 +61,7 @@ return 'text-amber-700';
 
 <AppHead title="Leaderboard" />
 
-<div class="mx-auto max-w-5xl p-6">
+<div class="mx-auto max-w-7xl w-full p-6">
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-bold tracking-tight">Papan Peringkat</h1>
@@ -90,10 +90,10 @@ return 'text-amber-700';
             </Card>
         {/if}
 
-        <Card class="overflow-hidden border-border bg-card">
+        <Card class="overflow-hidden border-border/60 bg-card shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-muted/50 text-muted-foreground">
+                    <thead class="bg-transparent border-b border-border/40 text-muted-foreground">
                         <tr>
                             <th class="px-6 py-4 font-semibold w-24 text-center">Peringkat</th>
                             <th class="px-6 py-4 font-semibold">Nama Tim</th>
@@ -103,7 +103,7 @@ return 'text-amber-700';
                     </thead>
                     <tbody class="divide-y divide-border">
                         {#each leaderboard as entry (entry.team.id)}
-                            <tr class={`transition-colors hover:bg-muted/50 ${entry.is_current_team ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
+                            <tr class={`transition-colors hover:bg-muted/20 ${entry.is_current_team ? 'bg-muted/10' : ''}`}>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         {#if Number(entry.rank) <= 3}
@@ -118,7 +118,7 @@ return 'text-amber-700';
                                         {entry.team.name}
                                     </span>
                                     {#if entry.is_current_team}
-                                        <span class="ml-2 inline-flex items-center rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                                        <span class="ml-2 inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                                             Tim Anda
                                         </span>
                                     {/if}

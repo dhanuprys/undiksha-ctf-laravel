@@ -43,7 +43,7 @@ class DummyDataSeeder extends Seeder
             ['email' => 'tester2@example.com'],
             ['name' => 'Tester Two', 'password' => Hash::make('password'), 'email_verified_at' => now(), 'is_admin' => false]
         );
-        
+
         $tester3 = User::firstOrCreate(
             ['email' => 'tester3@example.com'],
             ['name' => 'Tester Three', 'password' => Hash::make('password'), 'email_verified_at' => now(), 'is_admin' => false]
@@ -65,7 +65,7 @@ class DummyDataSeeder extends Seeder
 
         // 2. Events (Active, Past, Upcoming)
         $activeEvent = Event::factory()->create([
-            'name' => 'Dummy Active CTF ' . date('Y') . ' - ' . Str::random(4), // Ensure unique names
+            'name' => 'Dummy Active CTF '.date('Y').' - '.Str::random(4), // Ensure unique names
             'year' => date('Y'),
             'is_active' => true,
             'start_time' => now()->subDays(2),
@@ -73,7 +73,7 @@ class DummyDataSeeder extends Seeder
         ]);
 
         $pastEvent = Event::factory()->create([
-            'name' => 'Dummy Past CTF ' . (date('Y') - 1) . ' - ' . Str::random(4),
+            'name' => 'Dummy Past CTF '.(date('Y') - 1).' - '.Str::random(4),
             'year' => date('Y') - 1,
             'is_active' => false,
             'start_time' => now()->subMonths(3)->subDays(2),
@@ -81,7 +81,7 @@ class DummyDataSeeder extends Seeder
         ]);
 
         $upcomingEvent = Event::factory()->create([
-            'name' => 'Dummy Upcoming CTF ' . (date('Y') + 1) . ' - ' . Str::random(4),
+            'name' => 'Dummy Upcoming CTF '.(date('Y') + 1).' - '.Str::random(4),
             'year' => date('Y') + 1,
             'is_active' => false,
             'start_time' => now()->addMonths(2)->subDays(2),
@@ -96,7 +96,7 @@ class DummyDataSeeder extends Seeder
             foreach ($categories as $category) {
                 // Mix of active and varying difficulties
                 $difficulties = [ChallengeLevel::Easy, ChallengeLevel::Medium, ChallengeLevel::Hard];
-                
+
                 foreach ($difficulties as $difficulty) {
                     $challenge = Challenge::factory()->create([
                         'event_id' => $event->id,
@@ -108,11 +108,11 @@ class DummyDataSeeder extends Seeder
 
                     // Situation: Add an attachment to some challenges (approx 50% chance)
                     if (rand(0, 1)) {
-                        $fileName = 'challenge_file_' . Str::random(4) . '.txt';
-                        $filePath = 'challenge-attachments/' . Str::random(10) . '.txt';
-                        
+                        $fileName = 'challenge_file_'.Str::random(4).'.txt';
+                        $filePath = 'challenge-attachments/'.Str::random(10).'.txt';
+
                         // Create a REAL physical file in the local disk (storage/app/private/challenge-attachments)
-                        Storage::disk('local')->put($filePath, 'This is a dummy file for ' . $challenge->title);
+                        Storage::disk('local')->put($filePath, 'This is a dummy file for '.$challenge->title);
 
                         ChallengeAttachment::create([
                             'challenge_id' => $challenge->id,
@@ -131,7 +131,7 @@ class DummyDataSeeder extends Seeder
                     'category_id' => $category->id,
                     'is_active' => false,
                     'difficulty' => ChallengeLevel::VeryHard,
-                    'title' => 'Inactive ' . $category->name . ' Challenge',
+                    'title' => 'Inactive '.$category->name.' Challenge',
                 ]);
             }
 
@@ -143,7 +143,7 @@ class DummyDataSeeder extends Seeder
             // Add our specific testers to the first 3 teams
             $teams[0]->users()->syncWithoutDetaching([$tester1->id, $tester2->id]);
             $teams[1]->users()->syncWithoutDetaching([$tester3->id]);
-            
+
             // Special Team Situations
             $teamZeroSubmissions = $teams[2]; // Situation: Team with 0 submissions
             $teamOnlyIncorrect = $teams[3]; // Situation: Team with only incorrect submissions
@@ -155,7 +155,7 @@ class DummyDataSeeder extends Seeder
                     $teamUsers = User::factory(rand(1, 3))->create();
                     $team->users()->attach($teamUsers->pluck('id'));
                 }
-                
+
                 $teamUsers = $team->users()->get();
 
                 // Situation: Team with 0 submissions
@@ -168,20 +168,21 @@ class DummyDataSeeder extends Seeder
                     $challenge = $challenges->random();
                     $user = $teamUsers->random();
                     $submitTime = fake()->dateTimeBetween($event->start_time, $event->end_time < now() ? $event->end_time : now());
-                    
+
                     Submission::factory()->incorrect()->create([
                         'user_id' => $user->id,
                         'team_id' => $team->id,
                         'challenge_id' => $challenge->id,
-                        'submitted_flag' => 'CTF{wrong_flag_' . Str::random(5) . '}',
+                        'submitted_flag' => 'CTF{wrong_flag_'.Str::random(5).'}',
                         'created_at' => $submitTime,
                     ]);
+
                     continue; // skip creating correct submissions
                 }
 
                 // Normal Teams: Generate random submissions
                 $solvedChallenges = $challenges->random(rand(2, 6)); // Each team solves 2-6 challenges
-                
+
                 foreach ($solvedChallenges as $challenge) {
                     $user = $teamUsers->random(); // Random member submits
 
@@ -194,8 +195,8 @@ class DummyDataSeeder extends Seeder
                             'user_id' => $user->id,
                             'team_id' => $team->id,
                             'challenge_id' => $challenge->id,
-                            'submitted_flag' => 'CTF{wrong_flag_' . Str::random(5) . '}',
-                            'created_at' => (clone $submitTime)->modify('-' . rand(1, 60) . ' minutes'),
+                            'submitted_flag' => 'CTF{wrong_flag_'.Str::random(5).'}',
+                            'created_at' => (clone $submitTime)->modify('-'.rand(1, 60).' minutes'),
                         ]);
                     }
 

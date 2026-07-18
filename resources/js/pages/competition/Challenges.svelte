@@ -27,7 +27,7 @@
 
 <AppHead title="Tantangan" />
 
-<div class="p-6">
+<div class="mx-auto max-w-7xl w-full p-6">
     {#if status === 'not_started'}
         <div class="flex h-64 items-center justify-center rounded-xl border border-dashed border-border text-center">
             <div class="max-w-md">
@@ -57,16 +57,16 @@
                         
                         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {#each category.challenges as challenge (challenge.id)}
-                                <Link href={show({ challenge: challenge.id }).url} class="block transition-transform hover:-translate-y-1">
-                                    <Card class={`h-full border-2 ${challenge.solved_by_team ? 'border-green-500/50 bg-green-50/50 dark:bg-green-950/20' : 'border-transparent hover:border-primary/20'}`}>
+                                <Link href={show({ challenge: challenge.id }).url} class="block h-full transition-all duration-300 hover:-translate-y-1">
+                                    <Card class={`flex flex-col h-full border bg-card transition-shadow hover:shadow-md ${challenge.solved_by_team ? 'border-green-500/40 dark:border-green-500/30' : 'border-border/60 hover:border-border'}`}>
                                         <CardHeader class="pb-3">
                                             <div class="flex items-start justify-between">
                                                 <DifficultyBadge difficulty={challenge.difficulty} />
-                                                <div class="text-lg font-bold text-primary">
+                                                <div class="text-lg font-bold text-primary whitespace-nowrap ml-2">
                                                     {challenge.base_score} pts
                                                 </div>
                                             </div>
-                                            <CardTitle class="mt-2 text-xl leading-tight">
+                                            <CardTitle class="mt-2 text-xl leading-tight line-clamp-2 min-h-[3.5rem]">
                                                 {challenge.title}
                                             </CardTitle>
                                         </CardHeader>
@@ -77,14 +77,18 @@
                                             </div>
                                         </CardContent>
                                         
-                                        {#if challenge.solved_by_team}
-                                            <CardFooter class="pt-0">
-                                                <div class="flex w-full items-center justify-center gap-2 rounded-md bg-green-100 py-2 text-sm font-semibold text-green-700 dark:bg-green-900/50 dark:text-green-400">
+                                        <CardFooter class="pt-0 mt-auto">
+                                            {#if challenge.solved_by_team}
+                                                <div class="flex w-full items-center justify-center gap-2 rounded-md bg-muted/40 py-2 text-sm font-medium text-green-600 dark:text-green-500 border border-green-500/20">
                                                     <CheckCircle2 class="h-4 w-4" />
                                                     Diselesaikan
                                                 </div>
-                                            </CardFooter>
-                                        {/if}
+                                            {:else}
+                                                <div class="flex w-full items-center justify-center gap-2 rounded-md bg-muted/10 py-2 text-sm font-medium text-muted-foreground/50 border border-dashed border-border/50">
+                                                    Belum diselesaikan
+                                                </div>
+                                            {/if}
+                                        </CardFooter>
                                     </Card>
                                 </Link>
                             {/each}

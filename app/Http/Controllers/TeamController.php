@@ -30,6 +30,7 @@ class TeamController extends Controller
 
         if ($team) {
             $team->load(['submissions.challenge:id,title']);
+            $team->append('total_score');
         }
 
         return Inertia::render('competition/Team', [

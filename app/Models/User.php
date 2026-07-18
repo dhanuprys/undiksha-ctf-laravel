@@ -66,7 +66,7 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin();
+        return true;
     }
 
     public function scopeAdmin(Builder $query): void

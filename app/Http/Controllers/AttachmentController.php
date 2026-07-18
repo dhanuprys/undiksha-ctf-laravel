@@ -33,12 +33,12 @@ class AttachmentController extends Controller
             abort(404);
         }
 
-        if (! Storage::disk('public')->exists($attachment->file_path)) {
+        if (! Storage::disk('local')->exists($attachment->file_path)) {
             abort(404, 'File tidak ditemukan.');
         }
 
         $attachment->increment('download_count');
 
-        return Storage::disk('public')->download($attachment->file_path, $attachment->file_name);
+        return Storage::disk('local')->download($attachment->file_path, $attachment->file_name);
     }
 }

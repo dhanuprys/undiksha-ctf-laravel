@@ -1,8 +1,8 @@
 <?php
 
-use function Pest\Laravel\post;
-use function Pest\Laravel\get;
 use function Pest\Laravel\assertAuthenticated;
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 it('simulates inertia registration', function () {
     $response = post('/register', [

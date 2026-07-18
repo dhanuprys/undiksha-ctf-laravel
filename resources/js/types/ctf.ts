@@ -6,6 +6,7 @@ export type Team = {
     users?: { id: number; name: string; email: string }[];
     submissions?: Submission[];
     total_score?: number;
+    created_at: string;
 };
 
 export type Event = {

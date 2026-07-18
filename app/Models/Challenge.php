@@ -2,20 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\ChallengeLevel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
-use App\Enums\ChallengeLevel;
 
 class Challenge extends Model
 {
     use HasFactory, LogsActivity;
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()->logUnguarded();
-    }
 
     protected $fillable = [
         'event_id',
@@ -25,15 +21,18 @@ class Challenge extends Model
         'base_score',
         'difficulty',
         'flag',
+        'attachment_path',
         'is_active',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'difficulty' => ChallengeLevel::class,
+    ];
+
+    public function getActivitylogOptions(): LogOptions
     {
-        return [
-            'is_active' => 'boolean',
-            'difficulty' => ChallengeLevel::class,
-        ];
+        return LogOptions::defaults()
+            ->logAll();
     }
 
     public function event()
@@ -49,5 +48,20 @@ class Challenge extends Model
     public function submissions()
     {
         return $this->hasMany(Submission::class);
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ChallengeAttachment::class);
+    }
+
+    public function getCorrectSubmissionsCountAttribute(): int
+    {
+        return $this->submissions()->where('is_correct', true)->count();
+    }
+
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', true);
     }
 }

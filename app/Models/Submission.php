@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,5 +36,15 @@ class Submission extends Model
     public function challenge()
     {
         return $this->belongsTo(Challenge::class);
+    }
+
+    public function scopeCorrect(Builder $query): void
+    {
+        $query->where('is_correct', true);
+    }
+
+    public function scopeIncorrect(Builder $query): void
+    {
+        $query->where('is_correct', false);
     }
 }

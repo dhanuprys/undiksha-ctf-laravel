@@ -1,0 +1,35 @@
+services:
+  app:
+    image: dhanuprys/undiksha-ctf:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/app/.env
+      - ./storage:/app/storage
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+      - redis
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env.db
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

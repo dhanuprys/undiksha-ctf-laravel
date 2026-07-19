@@ -18,7 +18,7 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request)
     {
         if (Auth::user()->isAdmin()) {
-            return redirect()->intended('/admin');
+            return \Inertia\Inertia::location(url('/admin'));
         }
 
         return redirect()->intended(config('fortify.home', '/dashboard'));

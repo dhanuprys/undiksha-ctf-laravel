@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1-php8.2-alpine
+FROM dunglas/frankenphp:1-php8.4-alpine
 
 # Install PHP extensions
 RUN apk add --no-cache \
@@ -22,6 +22,7 @@ RUN apk add --no-cache \
     fileinfo \
     filter \
     hash \
+    intl \
     mbstring \
     openssl \
     pcre \

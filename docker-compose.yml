@@ -1,6 +1,6 @@
 services:
   app:
-    image: dhanuprys/undiksha-ctf:latest
+    image: ghcr.io/dhanuprys/undiksha-ctf:latest
     ports:
       - "8000:8000"
     volumes:

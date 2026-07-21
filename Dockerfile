@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1-php8.4-alpine
+FROM dunglas/frankenphp:1-php8.4-alpine AS base
 
 # Install PHP extensions
 RUN apk add --no-cache \
@@ -35,14 +35,15 @@ RUN apk add --no-cache \
     redis \
     && apk del .build-deps
 
-# Install Composer
+# Builder stage for both Composer and NPM (PHP is required for Wayfinder)
+FROM base AS builder
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN apk add --no-cache nodejs npm
 
 WORKDIR /app
 
 COPY . /app
-COPY storage/ /app/default-storage
-COPY ./.deployments/php.ini-production /usr/local/etc/php/php.ini
 
 RUN composer install \
     --classmap-authoritative \
@@ -52,6 +53,22 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader \
     && composer clear-cache
+
+RUN npm install \
+    && npm run build
+
+# Final production stage
+FROM base
+
+WORKDIR /app
+
+COPY . /app
+COPY storage/ /app/default-storage
+COPY ./.deployments/php.ini-production /usr/local/etc/php/php.ini
+
+# Copy dependencies and built assets from builder
+COPY --from=builder /app/vendor /app/vendor
+COPY --from=builder /app/public/build /app/public/build
 
 RUN chmod +x ./docker-entrypoint.sh
 

@@ -90,20 +90,51 @@ class DummyDataSeeder extends Seeder
 
         $events = collect([$activeEvent, $pastEvent]);
 
+        $realChallenges = [
+            'Web Exploitation' => [
+                ['title' => 'SQLi Login', 'desc' => 'Can you bypass the login screen? <br/> `SELECT * FROM users WHERE username = \'$user\' AND password = \'$pass\'`', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{sqli_is_easy_123}'],
+                ['title' => 'Directory Traversal', 'desc' => 'Find the secret file hidden in the server directory structure. The server uses `include($_GET["page"])`.', 'difficulty' => ChallengeLevel::Medium, 'score' => 250, 'flag' => 'CTF{lfi_to_rce_magic}'],
+                ['title' => 'SSTI', 'desc' => 'The server reflects your input using Jinja2 templates. Can you read the flag file?', 'difficulty' => ChallengeLevel::Hard, 'score' => 500, 'flag' => 'CTF{template_injection_master}'],
+            ],
+            'Reverse Engineering' => [
+                ['title' => 'Simple XOR', 'desc' => 'The binary XORs the flag with a single byte key. Find the key and decode it.', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{xor_the_world}'],
+                ['title' => 'ELF Analysis', 'desc' => 'We found this suspicious Linux binary. Can you figure out what password it wants?', 'difficulty' => ChallengeLevel::Medium, 'score' => 250, 'flag' => 'CTF{ghidra_is_your_friend}'],
+                ['title' => 'Anti-Debugging', 'desc' => 'This binary refuses to run under `gdb`. Can you bypass the checks?', 'difficulty' => ChallengeLevel::Hard, 'score' => 500, 'flag' => 'CTF{ptrace_me_if_you_can}'],
+            ],
+            'Cryptography' => [
+                ['title' => 'Caesar Cipher', 'desc' => 'Decrypt this message: `PGS{pnrfne_pvcure_vf_byq}`', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{caesar_cipher_is_old}'],
+                ['title' => 'RSA Factorization', 'desc' => 'We intercepted an RSA public key with a very small modulus `N = 3233`, `e = 17`. The ciphertext is `2790`. Decrypt it.', 'difficulty' => ChallengeLevel::Medium, 'score' => 250, 'flag' => 'CTF{rsa_small_n_65}'],
+                ['title' => 'AES ECB Penguin', 'desc' => 'We encrypted a bitmap image with AES ECB mode. What can you see?', 'difficulty' => ChallengeLevel::Hard, 'score' => 500, 'flag' => 'CTF{never_use_ecb_mode}'],
+            ],
+            'Forensics' => [
+                ['title' => 'Magic Bytes', 'desc' => 'This file has no extension and won\'t open. Fix its header to reveal the image.', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{magic_bytes_png_89504e47}'],
+                ['title' => 'PCAP Analysis', 'desc' => 'We captured some network traffic. Find the hidden flag being exfiltrated via HTTP.', 'difficulty' => ChallengeLevel::Medium, 'score' => 250, 'flag' => 'CTF{wireshark_http_export}'],
+                ['title' => 'Memory Dump', 'desc' => 'Analyze this Windows memory dump and extract the user\'s NTLM hash.', 'difficulty' => ChallengeLevel::Hard, 'score' => 500, 'flag' => 'CTF{volatility_mimikatz_dump}'],
+            ],
+            'Miscellaneous' => [
+                ['title' => 'Discord Welcome', 'desc' => 'Join our Discord server and read the #rules channel.', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{welcome_to_undiksha_ctf}'],
+                ['title' => 'Regex Crossword', 'desc' => 'Solve the regular expression crossword puzzle to get the flag.', 'difficulty' => ChallengeLevel::Medium, 'score' => 250, 'flag' => 'CTF{regex_master_ninja}'],
+                ['title' => 'OSINT Twitter', 'desc' => 'Find the flag hidden in one of the tweets of the target user.', 'difficulty' => ChallengeLevel::Hard, 'score' => 500, 'flag' => 'CTF{osint_twitter_detective}'],
+            ]
+        ];
+
         foreach ($events as $event) {
             // Create Challenges for Event across all categories
             $challenges = collect();
+            
             foreach ($categories as $category) {
-                // Mix of active and varying difficulties
-                $difficulties = [ChallengeLevel::Easy, ChallengeLevel::Medium, ChallengeLevel::Hard];
-
-                foreach ($difficulties as $difficulty) {
-                    $challenge = Challenge::factory()->create([
+                $catChallenges = $realChallenges[$category->name] ?? [];
+                
+                foreach ($catChallenges as $cData) {
+                    $challenge = Challenge::create([
                         'event_id' => $event->id,
                         'category_id' => $category->id,
+                        'title' => $cData['title'],
+                        'description' => $cData['desc'],
+                        'base_score' => $cData['score'],
+                        'difficulty' => $cData['difficulty'],
+                        'flag' => $cData['flag'],
                         'is_active' => true,
-                        'difficulty' => $difficulty,
-                        'base_score' => ($difficulty === ChallengeLevel::Easy ? 100 : ($difficulty === ChallengeLevel::Medium ? 250 : 500)),
                     ]);
 
                     // Situation: Add an attachment to some challenges (approx 50% chance)

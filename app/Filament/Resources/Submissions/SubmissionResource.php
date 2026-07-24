@@ -32,6 +32,11 @@ class SubmissionResource extends Resource
         return false;
     }
 
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return SubmissionForm::configure($schema);

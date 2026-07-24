@@ -9,6 +9,19 @@ class CreateEvent extends CreateRecord
 {
     protected static string $resource = EventResource::class;
 
+    protected function getCreateFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCreateFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->action('create');
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Catatan: Hanya boleh ada satu acara (event) yang aktif dalam satu waktu. Jika Anda mengaktifkan acara baru, acara yang sedang aktif sebelumnya akan dinonaktifkan secara otomatis.';
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         // Remove settings fields from data so it doesn't try to save them to the event table

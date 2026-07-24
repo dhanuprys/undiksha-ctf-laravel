@@ -13,8 +13,21 @@ class EditEvent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()->requiresConfirmation(),
         ];
+    }
+
+    protected function getSaveFormAction(): \Filament\Actions\Action
+    {
+        return parent::getSaveFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->action('save');
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Catatan: Hanya boleh ada satu acara (event) yang aktif dalam satu waktu. Jika Anda mengaktifkan acara baru, acara yang sedang aktif sebelumnya akan dinonaktifkan secara otomatis.';
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

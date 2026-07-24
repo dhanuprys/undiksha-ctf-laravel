@@ -16,4 +16,9 @@ class ListEvents extends ListRecords
             CreateAction::make(),
         ];
     }
+
+    public function getSubheading(): ?string
+    {
+        return 'Catatan: Hanya boleh ada satu acara (event) yang aktif dalam satu waktu. Jika Anda mengaktifkan acara baru, acara yang sedang aktif sebelumnya akan dinonaktifkan secara otomatis.';
+    }
 }

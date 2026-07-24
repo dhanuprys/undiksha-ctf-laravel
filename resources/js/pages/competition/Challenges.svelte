@@ -19,10 +19,46 @@
     let {
         categories = [],
         status,
+        start_time,
     }: {
         categories: Category[];
         status: 'active' | 'not_started' | 'no_team' | 'ended';
+        start_time?: string | null;
     } = $props();
+
+    let timeRemaining = $state('');
+
+    $effect(() => {
+        if (status === 'not_started' && start_time) {
+            const target = new Date(start_time).getTime();
+            
+            const updateTimer = () => {
+                const now = new Date().getTime();
+                const diff = target - now;
+                
+                if (diff <= 0) {
+                    timeRemaining = '00:00:00';
+                    window.location.reload();
+
+                    return;
+                }
+                
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                timeRemaining = d > 0 
+                    ? `${d} hari ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+                    : `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            };
+            
+            updateTimer();
+            const interval = setInterval(updateTimer, 1000);
+            
+            return () => clearInterval(interval);
+        }
+    });
 </script>
 
 <AppHead title="Tantangan" />
@@ -34,6 +70,12 @@
                 <Lock class="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <h3 class="mb-2 text-lg font-semibold">Kompetisi Belum Dimulai</h3>
                 <p class="text-sm text-muted-foreground">Tantangan akan muncul di sini setelah waktu kompetisi dimulai.</p>
+                {#if timeRemaining}
+                    <div class="mt-6 inline-flex flex-col items-center justify-center gap-1 rounded-lg bg-primary/10 px-6 py-3 text-primary border border-primary/20 shadow-sm">
+                        <span class="text-xs font-semibold uppercase tracking-widest opacity-80">Waktu Tersisa</span>
+                        <span class="font-mono text-3xl font-bold tracking-[0.15em]">{timeRemaining}</span>
+                    </div>
+                {/if}
             </div>
         </div>
     {:else if status === 'ended'}
@@ -74,7 +116,7 @@
                                                     {challenge.base_score} pts
                                                 </div>
                                             </div>
-                                            <CardTitle class="mt-2 text-xl leading-tight line-clamp-2 min-h-[3.5rem]">
+                                            <CardTitle class="mt-2 text-xl leading-tight line-clamp-2 min-h-14">
                                                 {challenge.title}
                                             </CardTitle>
                                         </CardHeader>

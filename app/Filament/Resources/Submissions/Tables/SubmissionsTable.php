@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Submissions\Tables;
 
 use App\Models\Event;
-use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -76,7 +75,6 @@ class SubmissionsTable
                 ViewAction::make()
                     ->slideOver()
                     ->label('Lihat Detail'),
-                EditAction::make(),
             ])
             ->toolbarActions([
                 // Read-only

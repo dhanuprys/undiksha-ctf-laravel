@@ -50,6 +50,7 @@ class ChallengeController extends Controller
             return Inertia::render('competition/Challenges', [
                 'categories' => [],
                 'status' => 'not_started',
+                'start_time' => $activeEvent->start_time ? $activeEvent->start_time->toIso8601String() : null,
             ]);
         }
 

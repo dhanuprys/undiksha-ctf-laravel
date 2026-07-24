@@ -65,7 +65,7 @@ class EventForm
                                 ->numeric()
                                 ->minValue(1)
                                 ->maxValue(100)
-                                ->default(5)
+                                ->default(3)
                                 ->required(),
                         ]),
                     ]),

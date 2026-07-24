@@ -23,7 +23,7 @@ class EditEvent extends EditRecord
 
         $data['degradation_rate'] = $event->settings()->where('key', 'degradation_rate')->value('value');
         $data['penalty_deduction'] = $event->settings()->where('key', 'penalty_deduction')->value('value');
-        $data['max_team_size'] = $event->settings()->where('key', 'max_team_size')->value('value') ?? 5;
+        $data['max_team_size'] = $event->settings()->where('key', 'max_team_size')->value('value') ?? 3;
 
         return $data;
     }

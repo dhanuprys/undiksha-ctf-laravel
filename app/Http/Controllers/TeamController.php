@@ -22,7 +22,7 @@ class TeamController extends Controller
             ]);
         }
 
-        $maxTeamSize = (int) ($activeEvent->getSetting('max_team_size', 5));
+        $maxTeamSize = (int) ($activeEvent->getSetting('max_team_size', 3));
 
         $team = $user->teams()
             ->where('event_id', $activeEvent->id)
@@ -74,8 +74,8 @@ class TeamController extends Controller
             ]);
         }
 
-        // Check team size limit (default: 5 members)
-        $maxTeamSize = (int) ($activeEvent->getSetting('max_team_size', 5));
+        // Check team size limit (default: 3 members)
+        $maxTeamSize = (int) ($activeEvent->getSetting('max_team_size', 3));
         $currentMemberCount = $team->users()->count();
 
         if ($currentMemberCount >= $maxTeamSize) {

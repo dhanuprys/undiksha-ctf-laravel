@@ -90,6 +90,16 @@ class DummyDataSeeder extends Seeder
 
         $events = collect([$activeEvent, $pastEvent]);
 
+        // Seed basic settings for each event
+        foreach ($events->push($upcomingEvent) as $evt) {
+            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'degradation_rate'], ['value' => '0.10']);
+            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'penalty_deduction'], ['value' => '5']);
+            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'max_team_size'], ['value' => '3']);
+        }
+        
+        // Remove upcomingEvent from main processing loop array
+        $events->pop();
+
         $realChallenges = [
             'Web Exploitation' => [
                 ['title' => 'SQLi Login', 'desc' => 'Can you bypass the login screen? <br/> `SELECT * FROM users WHERE username = \'$user\' AND password = \'$pass\'`', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{sqli_is_easy_123}'],

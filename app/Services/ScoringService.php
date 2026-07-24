@@ -23,10 +23,11 @@ class ScoringService
             // Lock the challenge row to serialize concurrent submissions for the same challenge
             $lockedChallenge = Challenge::where('id', $challenge->id)->lockForUpdate()->firstOrFail();
 
-            $isCorrect = ($lockedChallenge->flag === $flag);
+            // Trim whitespace to prevent accidental mismatches
+            $isCorrect = trim($flag) === trim($lockedChallenge->flag);
 
             if ($isCorrect) {
-                // Check if already solved by this team
+                // Check if already solved by this team (within the lock to prevent race conditions)
                 $alreadySolved = Submission::where('challenge_id', $lockedChallenge->id)
                     ->where('team_id', $team->id)
                     ->where('is_correct', true)
@@ -53,7 +54,10 @@ class ScoringService
     }
 
     /**
-     * Calculate points with degradation logic for First-Blood.
+     * Calculate points with degradation logic.
+     * Formula: base_score * (1 - degradation_rate) ^ solvedCount
+     *
+     * First solver gets full points, each subsequent solver gets less.
      */
     protected function calculateCorrectPoints(Challenge $challenge): int
     {
@@ -62,7 +66,7 @@ class ScoringService
             ->where('is_correct', true)
             ->count();
 
-        // Determine degradation rate (e.g., 10% reduction per solve)
+        // Determine degradation rate from event settings
         $degradationRate = Setting::where('event_id', $challenge->event_id)
             ->where('key', 'degradation_rate')
             ->value('value');
@@ -72,11 +76,15 @@ class ScoringService
 
         $multiplier = pow(1 - $degradationRate, $solvedCount);
 
-        return (int) round($challenge->base_score * $multiplier);
+        // Minimum 10% of base score to prevent zero-point challenges
+        $minScore = (int) ceil($challenge->base_score * 0.10);
+
+        return max($minScore, (int) round($challenge->base_score * $multiplier));
     }
 
     /**
      * Calculate point deductions for incorrect flags.
+     * Returns a negative number (or zero).
      */
     protected function calculatePenalty(?int $eventId): int
     {

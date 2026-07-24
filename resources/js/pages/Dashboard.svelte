@@ -15,10 +15,10 @@
     import { page, Link } from '@inertiajs/svelte';
     import { Trophy, Flag, Hash, Calendar, Shield, Activity, ArrowRight, Clock, Target, Play, Zap, CheckCircle2 } from 'lucide-svelte';
     import AppHead from '@/components/AppHead.svelte';
-    import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-    import { Button } from '@/components/ui/button';
-    import { Progress } from '@/components/ui/progress';
     import CountdownTimer from '@/components/CountdownTimer.svelte';
+    import { Button } from '@/components/ui/button';
+    import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+    import { Progress } from '@/components/ui/progress';
     import type { Team, Event } from '@/types/ctf';
 
     let {
@@ -252,7 +252,7 @@
                                 <div class="divide-y divide-border/40 relative">
                                     <!-- Vertical timeline line -->
                                     <div class="absolute left-[31px] top-6 bottom-6 w-px bg-border/60"></div>
-                                    {#each recentSubmissions as submission}
+                                    {#each recentSubmissions as submission (submission.id)}
                                         <div class="p-4 group hover:bg-muted/30 transition-colors flex gap-4 items-start relative z-10">
                                             <div class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-500 shadow-sm bg-card">
                                                 <CheckCircle2 class="h-4 w-4" />

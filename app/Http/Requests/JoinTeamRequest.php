@@ -23,7 +23,7 @@ class JoinTeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'join_code' => ['required', 'string', 'exists:teams,join_code'],
+            'join_code' => ['required', 'string', 'max:20'],
         ];
     }
 

@@ -15,7 +15,9 @@ Route::middleware(['auth', 'verified', 'participant'])->group(function () {
 
     // Team
     Route::get('team', [TeamController::class, 'show'])->name('team.show');
-    Route::post('team/join', [TeamController::class, 'join'])->name('team.join');
+    Route::post('team/join', [TeamController::class, 'join'])
+        ->middleware('throttle:10,1')
+        ->name('team.join');
 
     // Challenges
     Route::get('challenges', [ChallengeController::class, 'index'])->name('challenges.index');

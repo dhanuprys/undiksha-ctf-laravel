@@ -142,7 +142,7 @@
                                 <div class="space-y-1.5">
                                     <h3 class="font-black text-2xl tracking-tight text-green-600 dark:text-green-400">Tepat Sekali!</h3>
                                     <p class="text-sm text-muted-foreground">
-                                        Tim Anda telah menyelesaikan tantangan ini dan mendapatkan <span class="font-bold text-foreground">{challenge.base_score} poin</span>.
+                                        Tim Anda telah menyelesaikan tantangan ini dan mendapatkan <span class="font-bold text-foreground">{challenge.points_awarded ?? challenge.base_score} poin</span>.
                                     </p>
                                 </div>
                             </div>
@@ -153,7 +153,7 @@
                                         Masukkan flag yang Anda temukan untuk mendapatkan poin.
                                     </p>
                                     <p class="text-xs">
-                                        Format: <code class="px-1.5 py-0.5 rounded bg-background border border-border/60 font-mono text-foreground font-semibold">CTF{'{'}...{'}'}</code>
+                                        Format: <code class="px-1.5 py-0.5 rounded bg-background border border-border/60 font-mono text-foreground font-semibold">CTF&#123;...&#125;</code>
                                     </p>
                                 </div>
                                 <FlagSubmitForm challengeId={challenge.id} />

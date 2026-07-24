@@ -21,7 +21,7 @@
         status,
     }: {
         categories: Category[];
-        status: 'active' | 'not_started' | 'no_team';
+        status: 'active' | 'not_started' | 'no_team' | 'ended';
     } = $props();
 </script>
 
@@ -34,6 +34,14 @@
                 <Lock class="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <h3 class="mb-2 text-lg font-semibold">Kompetisi Belum Dimulai</h3>
                 <p class="text-sm text-muted-foreground">Tantangan akan muncul di sini setelah waktu kompetisi dimulai.</p>
+            </div>
+        </div>
+    {:else if status === 'ended'}
+        <div class="flex h-64 items-center justify-center rounded-xl border border-dashed border-border text-center">
+            <div class="max-w-md">
+                <Lock class="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                <h3 class="mb-2 text-lg font-semibold">Kompetisi Telah Berakhir</h3>
+                <p class="text-sm text-muted-foreground">Waktu kompetisi sudah habis. Terima kasih atas partisipasi Anda!</p>
             </div>
         </div>
     {:else if status === 'no_team'}

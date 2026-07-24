@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'activeEvent' => $activeEvent,
+            'activeEvent' => $activeEvent?->only(['id', 'name', 'year', 'start_time', 'end_time', 'is_active']),
             'auth' => [
                 'user' => $user ? array_merge($user->toArray(), [
                     'current_team' => $currentTeam,

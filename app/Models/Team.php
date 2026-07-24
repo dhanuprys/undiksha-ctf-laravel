@@ -29,7 +29,15 @@ class Team extends Model
 
         static::creating(function ($team) {
             if (empty($team->join_code)) {
-                $team->join_code = Str::upper(Str::random(8));
+                // Retry up to 5 times in case of unlikely collision
+                $maxAttempts = 5;
+                do {
+                    $code = Str::upper(Str::random(8));
+                    $exists = static::where('join_code', $code)->exists();
+                    $maxAttempts--;
+                } while ($exists && $maxAttempts > 0);
+
+                $team->join_code = $code;
             }
         });
     }
@@ -51,6 +59,11 @@ class Team extends Model
 
     public function getTotalScoreAttribute(): int
     {
-        return $this->submissions()->sum('points_awarded');
+        // Use loaded relation if available, otherwise query
+        if ($this->relationLoaded('submissions')) {
+            return (int) $this->submissions->sum('points_awarded');
+        }
+
+        return (int) $this->submissions()->sum('points_awarded');
     }
 }

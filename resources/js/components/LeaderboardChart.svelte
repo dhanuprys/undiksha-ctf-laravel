@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte';
     import Chart from 'chart.js/auto';
     import 'chartjs-adapter-date-fns';
     import { id } from 'date-fns/locale';
+    import { onMount, onDestroy } from 'svelte';
     import type { LeaderboardGraphData } from '@/types/ctf';
 
     let { graphData }: { graphData: LeaderboardGraphData[] } = $props();
@@ -30,7 +30,9 @@
     });
 
     onMount(() => {
-        if (!canvas) return;
+        if (!canvas) {
+            return;
+        }
         
         const rawData = $state.snapshot(graphData);
         chart = new Chart(canvas, {

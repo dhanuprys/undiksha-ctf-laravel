@@ -23,6 +23,7 @@ class EditEvent extends EditRecord
 
         $data['degradation_rate'] = $event->settings()->where('key', 'degradation_rate')->value('value');
         $data['penalty_deduction'] = $event->settings()->where('key', 'penalty_deduction')->value('value');
+        $data['max_team_size'] = $event->settings()->where('key', 'max_team_size')->value('value') ?? 5;
 
         return $data;
     }
@@ -32,6 +33,7 @@ class EditEvent extends EditRecord
         // Remove settings fields from data so it doesn't try to save them to the event table
         unset($data['degradation_rate']);
         unset($data['penalty_deduction']);
+        unset($data['max_team_size']);
 
         return $data;
     }
@@ -41,18 +43,15 @@ class EditEvent extends EditRecord
         $event = $this->getRecord();
         $formData = $this->form->getState();
 
-        if (array_key_exists('degradation_rate', $formData)) {
-            $event->settings()->updateOrCreate(
-                ['key' => 'degradation_rate'],
-                ['value' => $formData['degradation_rate']]
-            );
-        }
+        $settingsKeys = ['degradation_rate', 'penalty_deduction', 'max_team_size'];
 
-        if (array_key_exists('penalty_deduction', $formData)) {
-            $event->settings()->updateOrCreate(
-                ['key' => 'penalty_deduction'],
-                ['value' => $formData['penalty_deduction']]
-            );
+        foreach ($settingsKeys as $key) {
+            if (array_key_exists($key, $formData)) {
+                $event->settings()->updateOrCreate(
+                    ['key' => $key],
+                    ['value' => $formData[$key]]
+                );
+            }
         }
     }
 }

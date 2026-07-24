@@ -31,25 +31,32 @@ class LeaderboardController extends Controller
         }
 
         // Teams leaderboard logic
+        // Sum ALL submissions (including negative penalties) for total score
         $teams = $activeEvent->teams()
             ->withCount(['submissions as solved_count' => function ($query) {
                 $query->where('is_correct', true);
             }])
-            ->withSum(['submissions as score' => function ($query) {
-                $query->where('is_correct', true);
-            }], 'points_awarded')
+            ->withSum('submissions as score', 'points_awarded')
             ->withMax(['submissions as last_solve_time' => function ($query) {
                 $query->where('is_correct', true);
             }], 'created_at')
             ->get()
             ->map(function ($team) {
-                // Ensure null values are treated as 0 for sorting
                 $team->score = $team->score ?? 0;
 
                 return $team;
             })
-            ->sortByDesc('score')
-            ->sortBy('last_solve_time', SORT_REGULAR, true)
+            ->sort(function ($a, $b) {
+                // Primary: highest score first
+                if ($a->score !== $b->score) {
+                    return $b->score <=> $a->score;
+                }
+                // Tiebreaker: earliest last solve time first
+                $aTime = $a->last_solve_time ?? PHP_INT_MAX;
+                $bTime = $b->last_solve_time ?? PHP_INT_MAX;
+
+                return $aTime <=> $bTime;
+            })
             ->values();
 
         $leaderboard = $teams->map(function ($team, $index) use ($currentTeamId) {

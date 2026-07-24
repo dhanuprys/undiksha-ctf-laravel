@@ -18,8 +18,12 @@ class AttachmentController extends Controller
             abort(404);
         }
 
-        if (now()->lt($activeEvent->start_time)) {
+        if ($activeEvent->start_time && now()->lt($activeEvent->start_time)) {
             abort(403, 'Kompetisi belum dimulai.');
+        }
+
+        if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
+            abort(403, 'Kompetisi sudah berakhir.');
         }
 
         $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();

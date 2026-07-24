@@ -1,8 +1,6 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
-    import BookOpen from 'lucide-svelte/icons/book-open';
     import Flag from 'lucide-svelte/icons/flag';
-    import FolderGit2 from 'lucide-svelte/icons/folder-git-2';
     import LayoutGrid from 'lucide-svelte/icons/layout-grid';
     import Trophy from 'lucide-svelte/icons/trophy';
     import Users from 'lucide-svelte/icons/users';

@@ -18,23 +18,28 @@ class TeamController extends Controller
         if (! $activeEvent) {
             return Inertia::render('competition/Team', [
                 'team' => null,
+                'maxTeamSize' => 5,
             ]);
         }
+
+        $maxTeamSize = (int) ($activeEvent->getSetting('max_team_size', 5));
 
         $team = $user->teams()
             ->where('event_id', $activeEvent->id)
             ->with(['users' => function ($query) {
                 $query->select('users.id', 'name', 'email');
             }])
+            ->withSum('submissions as total_score', 'points_awarded')
             ->first();
 
         if ($team) {
-            $team->load(['submissions.challenge:id,title']);
-            $team->append('total_score');
+            // Only load correct submissions for the activity feed
+            $team->load(['submissions' => fn ($q) => $q->where('is_correct', true)->with('challenge:id,title')->orderByDesc('created_at')]);
         }
 
         return Inertia::render('competition/Team', [
             'team' => $team,
+            'maxTeamSize' => $maxTeamSize,
         ]);
     }
 
@@ -66,6 +71,17 @@ class TeamController extends Controller
         if (! $team) {
             return back()->withErrors([
                 'join_code' => 'Kode tim tidak ditemukan di acara ini.',
+            ]);
+        }
+
+        // Check team size limit (default: 5 members)
+        $maxTeamSize = (int) ($activeEvent->getSetting('max_team_size', 5));
+        $currentMemberCount = $team->users()->count();
+
+        if ($currentMemberCount >= $maxTeamSize) {
+            return back()->with('flash', [
+                'type' => 'error',
+                'message' => 'Tim sudah penuh (maksimal '.$maxTeamSize.' anggota).',
             ]);
         }
 

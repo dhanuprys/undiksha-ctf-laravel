@@ -37,9 +37,7 @@ class EventMonitorLeaderboard extends BaseWidget
                     ->withCount(['submissions as solved_count' => function ($query) {
                         $query->where('is_correct', true);
                     }])
-                    ->withSum(['submissions as score' => function ($query) {
-                        $query->where('is_correct', true);
-                    }], 'points_awarded')
+                    ->withSum('submissions as score', 'points_awarded')
                     ->withMax(['submissions as last_solve_time' => function ($query) {
                         $query->where('is_correct', true);
                     }], 'created_at')

@@ -8,15 +8,45 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
+use Stevebauman\Purify\Facades\Purify;
 
 class ChallengeController extends Controller
 {
+    /**
+     * Sanitize HTML content using HTMLPurifier via stevebauman/purify.
+     */
+    protected function sanitizeHtml(?string $html): string
+    {
+        if (! $html) {
+            return '';
+        }
+
+        return Purify::clean($html);
+    }
+
     public function index(Request $request)
     {
         $user = $request->user();
         $activeEvent = Event::where('is_active', true)->first();
 
-        if (! $activeEvent || ! $activeEvent->start_time || now()->lt($activeEvent->start_time)) {
+        // No active event
+        if (! $activeEvent) {
+            return Inertia::render('competition/Challenges', [
+                'categories' => [],
+                'status' => 'not_started',
+            ]);
+        }
+
+        // Event has ended
+        if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
+            return Inertia::render('competition/Challenges', [
+                'categories' => [],
+                'status' => 'ended',
+            ]);
+        }
+
+        // Event has not started yet
+        if (! $activeEvent->start_time || now()->lt($activeEvent->start_time)) {
             return Inertia::render('competition/Challenges', [
                 'categories' => [],
                 'status' => 'not_started',
@@ -51,12 +81,11 @@ class ChallengeController extends Controller
             ->pluck('challenge_id')
             ->toArray();
 
-        // Transform data to include solved_by_team flag and format difficulty
+        // Transform data to include solved_by_team flag and sanitize description
         $categories->transform(function ($category) use ($solvedChallengeIds) {
             $category->challenges->transform(function ($challenge) use ($solvedChallengeIds) {
                 $challenge->solved_by_team = in_array($challenge->id, $solvedChallengeIds);
-                // HTML sanitize description for safe rendering
-                $challenge->description = strip_tags($challenge->description, '<p><br><b><strong><i><em><u><ul><ol><li><a><code><pre><blockquote><h1><h2><h3><h4><h5><h6>');
+                $challenge->description = $this->sanitizeHtml($challenge->description);
 
                 return $challenge;
             });
@@ -93,12 +122,16 @@ class ChallengeController extends Controller
         // Hide sensitive info
         $challenge->makeHidden(['flag', 'event_id', 'is_active', 'created_at', 'updated_at']);
 
-        $challenge->description = strip_tags($challenge->description, '<p><br><b><strong><i><em><u><ul><ol><li><a><code><pre><blockquote><h1><h2><h3><h4><h5><h6>');
+        $challenge->description = $this->sanitizeHtml($challenge->description);
         $challenge->solve_count = $challenge->submissions()->where('is_correct', true)->count();
-        $challenge->solved_by_team = $currentTeam->submissions()
+
+        $teamCorrectSubmission = $currentTeam->submissions()
             ->where('challenge_id', $challenge->id)
             ->where('is_correct', true)
-            ->exists();
+            ->first();
+
+        $challenge->solved_by_team = $teamCorrectSubmission !== null;
+        $challenge->points_awarded = $teamCorrectSubmission?->points_awarded;
 
         // Format attachments
         $challenge->attachments->transform(function ($attachment) {

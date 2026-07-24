@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Link, page } from '@inertiajs/svelte';
+    import { Terminal, ArrowRight } from 'lucide-svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { toUrl } from '@/lib/utils';
     import { dashboard, login, register } from '@/routes';
-    import { Terminal, Shield, ArrowRight, Activity, Lock, EyeOff } from 'lucide-svelte';
 
     const auth = $derived(page.props.auth);
     const appName = import.meta.env.VITE_APP_NAME || 'CTF Undiksha';

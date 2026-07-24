@@ -46,6 +46,20 @@ class Event extends Model
         return $this->hasMany(Setting::class);
     }
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        // Ensure only one event can be active at a time
+        static::saving(function (Event $event) {
+            if ($event->is_active) {
+                Event::where('id', '!=', $event->id ?? 0)
+                    ->where('is_active', true)
+                    ->update(['is_active' => false]);
+            }
+        });
+    }
+
     public function scopeActive(Builder $query): void
     {
         $query->where('is_active', true);

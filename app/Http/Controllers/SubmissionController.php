@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SubmitFlagRequest;
 use App\Models\Challenge;
 use App\Models\Event;
+use App\Services\ScoringService;
+use Exception;
 
 class SubmissionController extends Controller
 {
+    public function __construct(
+        protected ScoringService $scoringService,
+    ) {}
+
     public function store(SubmitFlagRequest $request)
     {
         $user = $request->user();
@@ -20,7 +26,7 @@ class SubmissionController extends Controller
             ]);
         }
 
-        if (now()->lt($activeEvent->start_time) || ($activeEvent->end_time && now()->gt($activeEvent->end_time))) {
+        if (($activeEvent->start_time && now()->lt($activeEvent->start_time)) || ($activeEvent->end_time && now()->gt($activeEvent->end_time))) {
             return back()->with('flash', [
                 'type' => 'error',
                 'message' => 'Waktu kompetisi sudah berakhir atau belum dimulai.',
@@ -47,39 +53,33 @@ class SubmissionController extends Controller
             ]);
         }
 
-        // Check if team already solved this challenge
-        $alreadySolved = $currentTeam->submissions()
-            ->where('challenge_id', $challenge->id)
-            ->where('is_correct', true)
-            ->exists();
+        try {
+            $submission = $this->scoringService->submitFlag(
+                team: $currentTeam,
+                challenge: $challenge,
+                userId: $user->id,
+                flag: $request->flag,
+            );
 
-        if ($alreadySolved) {
+            if ($submission->is_correct) {
+                return back()->with('flash', [
+                    'type' => 'success',
+                    'message' => 'Selamat! Flag yang Anda masukkan BENAR. Tim Anda mendapatkan '.$submission->points_awarded.' poin.',
+                ]);
+            }
+
+            $penaltyMessage = $submission->points_awarded < 0
+                ? ' Penalti: '.$submission->points_awarded.' poin.'
+                : '';
+
+            return back()->withErrors([
+                'flag' => 'Flag salah, silakan coba lagi.'.$penaltyMessage,
+            ]);
+        } catch (Exception $e) {
             return back()->with('flash', [
                 'type' => 'warning',
-                'message' => 'Tim Anda sudah berhasil menyelesaikan tantangan ini.',
+                'message' => $e->getMessage(),
             ]);
         }
-
-        $isCorrect = $request->flag === $challenge->flag;
-        $pointsAwarded = $isCorrect ? $challenge->base_score : 0;
-
-        $currentTeam->submissions()->create([
-            'user_id' => $user->id,
-            'challenge_id' => $challenge->id,
-            'submitted_flag' => $request->flag,
-            'is_correct' => $isCorrect,
-            'points_awarded' => $pointsAwarded,
-        ]);
-
-        if ($isCorrect) {
-            return back()->with('flash', [
-                'type' => 'success',
-                'message' => 'Selamat! Flag yang Anda masukkan BENAR. Tim Anda mendapatkan '.$pointsAwarded.' poin.',
-            ]);
-        }
-
-        return back()->withErrors([
-            'flag' => 'Flag salah, silakan coba lagi.',
-        ]);
     }
 }

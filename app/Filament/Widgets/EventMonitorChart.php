@@ -35,12 +35,10 @@ class EventMonitorChart extends ChartWidget
             return ['datasets' => [], 'labels' => []];
         }
 
-        // Get top 10 teams
+        // Get top 10 teams — sum ALL submissions (including penalties)
         $topTeams = Team::query()
             ->where('event_id', $eventId)
-            ->withSum(['submissions as score' => function ($query) {
-                $query->where('is_correct', true);
-            }], 'points_awarded')
+            ->withSum('submissions as score', 'points_awarded')
             ->withMax(['submissions as last_solve_time' => function ($query) {
                 $query->where('is_correct', true);
             }], 'created_at')
@@ -59,9 +57,9 @@ class EventMonitorChart extends ChartWidget
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Create labels from the start of the event until now, or just use all unique submission timestamps
-        $labels = [];
-        $uniqueTimestamps = $submissions->pluck('created_at')->map(fn ($date) => $date->format('H:i'))->unique()->values()->toArray();
+        // Use full datetime format (d/m H:i) to correctly handle midnight crossings (#13)
+        $uniqueTimestamps = $submissions->pluck('created_at')->unique()->sort()->values();
+        $labels = $uniqueTimestamps->map(fn ($date) => $date->format('d/m H:i'))->toArray();
 
         $datasets = [];
 
@@ -72,13 +70,12 @@ class EventMonitorChart extends ChartWidget
 
         foreach ($topTeams as $index => $team) {
             $teamSubmissions = $submissions->where('team_id', $team->id);
-            $cumulativeScore = 0;
 
             $dataPoints = [];
             foreach ($uniqueTimestamps as $timestamp) {
-                // Find if this team had a submission at or before this timestamp
+                // Compare using full Carbon objects, not H:i strings
                 $scoreAtTime = $teamSubmissions->filter(function ($sub) use ($timestamp) {
-                    return $sub->created_at->format('H:i') <= $timestamp;
+                    return $sub->created_at->lte($timestamp);
                 })->sum('points_awarded');
 
                 $dataPoints[] = $scoreAtTime;
@@ -95,7 +92,7 @@ class EventMonitorChart extends ChartWidget
 
         return [
             'datasets' => $datasets,
-            'labels' => $uniqueTimestamps,
+            'labels' => $labels,
         ];
     }
 

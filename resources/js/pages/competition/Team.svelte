@@ -13,7 +13,7 @@
     import AppHead from '@/components/AppHead.svelte';
     import InputError from '@/components/InputError.svelte';
     import { Button } from '@/components/ui/button';
-    import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+    import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import { Spinner } from '@/components/ui/spinner';
@@ -22,8 +22,10 @@
 
     let {
         team,
+        maxTeamSize = 5,
     }: {
         team: Team | null;
+        maxTeamSize: number;
     } = $props();
 
     const form = useForm({
@@ -112,7 +114,7 @@
                             </CardTitle>
                         </CardHeader>
                         <CardContent class="pt-4">
-                            <p class="text-sm text-muted-foreground mb-3">Bagikan kode ini untuk mengundang anggota baru (maks 3 anggota).</p>
+                            <p class="text-sm text-muted-foreground mb-3">Bagikan kode ini untuk mengundang anggota baru (maks {maxTeamSize} anggota).</p>
                             <div class="flex items-center gap-2">
                                 <code class="flex-1 text-center bg-muted/50 border border-border/60 rounded-lg py-2.5 font-mono text-lg font-bold tracking-widest">
                                     {team.join_code}
@@ -140,13 +142,13 @@
                                 Anggota Tim
                             </CardTitle>
                             <span class="inline-flex items-center justify-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary border border-primary/20">
-                                {team.users ? team.users.length : 0} / 3
+                                {team.users ? team.users.length : 0} / {maxTeamSize}
                             </span>
                         </div>
                     </CardHeader>
                     <CardContent class="pt-6">
                         <div class="grid gap-4 sm:grid-cols-2">
-                            {#each team.users || [] as member, i}
+                            {#each team.users || [] as member, i (member.id)}
                                 <div class="flex items-center gap-4 rounded-xl border border-border/60 bg-card p-4 hover:bg-muted/10 transition-colors shadow-sm group">
                                     <div class="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 font-bold text-primary shadow-sm text-lg">
                                         {member.name.charAt(0).toUpperCase()}
@@ -164,7 +166,7 @@
                             {/each}
                             
                             <!-- Empty slots visualization -->
-                            {#each Array(Math.max(0, 3 - (team.users?.length || 0))) as _}
+                            {#each Array(Math.max(0, maxTeamSize - (team.users?.length || 0))) as _, index (index)}
                                 <div class="flex items-center gap-4 rounded-xl border border-dashed border-border/60 bg-muted/5 p-4 opacity-70">
                                     <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted border border-border font-bold text-muted-foreground text-lg">
                                         ?
@@ -193,7 +195,7 @@
                                 <!-- Vertical timeline line -->
                                 <div class="absolute left-[31px] top-6 bottom-6 w-px bg-border/60"></div>
                                 
-                                {#each team.submissions as submission}
+                                {#each team.submissions as submission (submission.id)}
                                     <div class="p-5 group hover:bg-muted/30 transition-colors flex gap-4 items-start relative z-10">
                                         <div class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-500 shadow-sm bg-card">
                                             <CheckCircle2 class="h-4 w-4" />

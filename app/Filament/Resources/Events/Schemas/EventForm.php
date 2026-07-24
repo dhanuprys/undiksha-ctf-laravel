@@ -67,6 +67,11 @@ class EventForm
                                 ->maxValue(100)
                                 ->default(3)
                                 ->required(),
+                            Toggle::make('show_solver_count')
+                                ->label('Tampilkan Jumlah Solver')
+                                ->helperText('Tampilkan ke peserta berapa banyak tim yang telah menyelesaikan challenge tertentu.')
+                                ->default(true)
+                                ->columnSpanFull(),
                         ]),
                     ]),
             ]);

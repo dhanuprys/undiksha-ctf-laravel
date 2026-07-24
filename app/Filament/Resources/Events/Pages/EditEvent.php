@@ -24,6 +24,7 @@ class EditEvent extends EditRecord
         $data['degradation_rate'] = $event->settings()->where('key', 'degradation_rate')->value('value');
         $data['penalty_deduction'] = $event->settings()->where('key', 'penalty_deduction')->value('value');
         $data['max_team_size'] = $event->settings()->where('key', 'max_team_size')->value('value') ?? 3;
+        $data['show_solver_count'] = filter_var($event->settings()->where('key', 'show_solver_count')->value('value') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         return $data;
     }
@@ -34,6 +35,7 @@ class EditEvent extends EditRecord
         unset($data['degradation_rate']);
         unset($data['penalty_deduction']);
         unset($data['max_team_size']);
+        unset($data['show_solver_count']);
 
         return $data;
     }
@@ -43,7 +45,7 @@ class EditEvent extends EditRecord
         $event = $this->getRecord();
         $formData = $this->form->getState();
 
-        $settingsKeys = ['degradation_rate', 'penalty_deduction', 'max_team_size'];
+        $settingsKeys = ['degradation_rate', 'penalty_deduction', 'max_team_size', 'show_solver_count'];
 
         foreach ($settingsKeys as $key) {
             if (array_key_exists($key, $formData)) {

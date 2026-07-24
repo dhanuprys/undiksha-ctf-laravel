@@ -15,6 +15,7 @@ class CreateEvent extends CreateRecord
         unset($data['degradation_rate']);
         unset($data['penalty_deduction']);
         unset($data['max_team_size']);
+        unset($data['show_solver_count']);
 
         return $data;
     }
@@ -24,7 +25,7 @@ class CreateEvent extends CreateRecord
         $event = $this->getRecord();
         $formData = $this->form->getState();
 
-        $settingsKeys = ['degradation_rate', 'penalty_deduction', 'max_team_size'];
+        $settingsKeys = ['degradation_rate', 'penalty_deduction', 'max_team_size', 'show_solver_count'];
 
         foreach ($settingsKeys as $key) {
             if (array_key_exists($key, $formData)) {

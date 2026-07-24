@@ -61,17 +61,22 @@ class ChallengeController extends Controller
             ]);
         }
 
+        $showSolverCount = filter_var($activeEvent->getSetting('show_solver_count', true), FILTER_VALIDATE_BOOLEAN);
+
         // Get all categories that have active challenges in this event
         $categories = Category::whereHas('challenges', function ($query) use ($activeEvent) {
             $query->where('event_id', $activeEvent->id)->where('is_active', true);
         })
-            ->with(['challenges' => function ($query) use ($activeEvent) {
+            ->with(['challenges' => function ($query) use ($activeEvent, $showSolverCount) {
                 $query->where('event_id', $activeEvent->id)
                     ->where('is_active', true)
-                    ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty')
-                    ->withCount(['submissions as solve_count' => function ($q) {
+                    ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty');
+                
+                if ($showSolverCount) {
+                    $query->withCount(['submissions as solve_count' => function ($q) {
                         $q->where('is_correct', true);
                     }]);
+                }
             }])
             ->get();
 
@@ -123,7 +128,8 @@ class ChallengeController extends Controller
         $challenge->makeHidden(['flag', 'event_id', 'is_active', 'created_at', 'updated_at']);
 
         $challenge->description = $this->sanitizeHtml($challenge->description);
-        $challenge->solve_count = $challenge->submissions()->where('is_correct', true)->count();
+        $showSolverCount = filter_var($activeEvent->getSetting('show_solver_count', true), FILTER_VALIDATE_BOOLEAN);
+        $challenge->solve_count = $showSolverCount ? $challenge->submissions()->where('is_correct', true)->count() : null;
 
         $teamCorrectSubmission = $currentTeam->submissions()
             ->where('challenge_id', $challenge->id)

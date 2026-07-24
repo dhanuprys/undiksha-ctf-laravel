@@ -95,6 +95,7 @@ class DummyDataSeeder extends Seeder
             \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'degradation_rate'], ['value' => '0.10']);
             \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'penalty_deduction'], ['value' => '5']);
             \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'max_team_size'], ['value' => '3']);
+            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'show_solver_count'], ['value' => '1']);
         }
         
         // Remove upcomingEvent from main processing loop array

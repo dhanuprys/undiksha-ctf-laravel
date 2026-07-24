@@ -70,10 +70,12 @@
                             <FolderOpen class="h-4 w-4 text-primary/80" />
                             <span>Kategori: <span class="text-foreground">{challenge.category?.name}</span></span>
                         </div>
-                        <div class="flex items-center gap-2 bg-background px-3.5 py-1.5 rounded-full border border-border/60 shadow-sm text-muted-foreground">
-                            <Users class="h-4 w-4 text-blue-500/80" />
-                            <span>Diselesaikan <span class="text-foreground">{challenge.solve_count}</span> tim</span>
-                        </div>
+                        {#if challenge.solve_count !== null}
+                            <div class="flex items-center gap-2 bg-background px-3.5 py-1.5 rounded-full border border-border/60 shadow-sm text-muted-foreground">
+                                <Users class="h-4 w-4 text-blue-500/80" />
+                                <span>Diselesaikan <span class="text-foreground">{challenge.solve_count}</span> tim</span>
+                            </div>
+                        {/if}
                     </div>
                 </CardHeader>
                 

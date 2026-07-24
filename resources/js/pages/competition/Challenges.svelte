@@ -81,7 +81,9 @@
                                         
                                         <CardContent>
                                             <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <span>{challenge.solve_count} tim telah menyelesaikan</span>
+                                                {#if challenge.solve_count !== null}
+                                                    <span>{challenge.solve_count} tim telah menyelesaikan</span>
+                                                {/if}
                                             </div>
                                         </CardContent>
                                         

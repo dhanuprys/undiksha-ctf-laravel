@@ -93,7 +93,7 @@ class DummyDataSeeder extends Seeder
         // Seed basic settings for each event
         foreach ($events->push($upcomingEvent) as $evt) {
             \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'degradation_rate'], ['value' => '0.10']);
-            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'penalty_deduction'], ['value' => '5']);
+            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'penalty_deduction'], ['value' => '0.05']);
             \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'max_team_size'], ['value' => '3']);
             \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'show_solver_count'], ['value' => '1']);
         }
@@ -216,6 +216,7 @@ class DummyDataSeeder extends Seeder
                         'team_id' => $team->id,
                         'challenge_id' => $challenge->id,
                         'submitted_flag' => 'CTF{wrong_flag_'.Str::random(5).'}',
+                        'points_awarded' => -1 * (int) floor($challenge->base_score * 0.05),
                         'created_at' => $submitTime,
                     ]);
 
@@ -224,6 +225,11 @@ class DummyDataSeeder extends Seeder
 
                 // Normal Teams: Generate random submissions
                 $solvedChallenges = $challenges->random(rand(2, 6)); // Each team solves 2-6 challenges
+
+                // Track solve count per challenge to compute correct points
+                if (!isset($challengeSolveCount)) {
+                    $challengeSolveCount = [];
+                }
 
                 foreach ($solvedChallenges as $challenge) {
                     $user = $teamUsers->random(); // Random member submits
@@ -238,9 +244,17 @@ class DummyDataSeeder extends Seeder
                             'team_id' => $team->id,
                             'challenge_id' => $challenge->id,
                             'submitted_flag' => 'CTF{wrong_flag_'.Str::random(5).'}',
+                            'points_awarded' => -1 * (int) floor($challenge->base_score * 0.05),
                             'created_at' => (clone $submitTime)->modify('-'.rand(1, 60).' minutes'),
                         ]);
                     }
+
+                    // Calculate points: first solver gets full, 2nd+ get 90%
+                    $solverIndex = $challengeSolveCount[$challenge->id] ?? 0;
+                    $points = $solverIndex === 0
+                        ? $challenge->base_score
+                        : (int) floor($challenge->base_score * 0.90);
+                    $challengeSolveCount[$challenge->id] = $solverIndex + 1;
 
                     // 1 correct submission
                     Submission::factory()->correct()->create([
@@ -248,7 +262,7 @@ class DummyDataSeeder extends Seeder
                         'team_id' => $team->id,
                         'challenge_id' => $challenge->id,
                         'submitted_flag' => $challenge->flag,
-                        'points_awarded' => $challenge->base_score,
+                        'points_awarded' => $points,
                         'created_at' => $submitTime,
                     ]);
                 }

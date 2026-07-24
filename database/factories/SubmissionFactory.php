@@ -34,7 +34,7 @@ class SubmissionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_correct' => true,
-            'points_awarded' => fake()->numberBetween(50, 500),
+            'points_awarded' => 100,
         ]);
     }
 
@@ -42,7 +42,7 @@ class SubmissionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_correct' => false,
-            'points_awarded' => fake()->numberBetween(-50, -10),
+            'points_awarded' => -25,
         ]);
     }
 }

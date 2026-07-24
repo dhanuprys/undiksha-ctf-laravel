@@ -39,7 +39,7 @@ class ScoringService
 
                 $points = $this->calculateCorrectPoints($lockedChallenge);
             } else {
-                $points = $this->calculatePenalty($lockedChallenge->event_id);
+                $points = $this->calculatePenalty($lockedChallenge->event_id, $lockedChallenge->base_score);
             }
 
             return Submission::create([
@@ -54,10 +54,10 @@ class ScoringService
     }
 
     /**
-     * Calculate points with degradation logic.
-     * Formula: base_score * (1 - degradation_rate) ^ solvedCount
+     * Calculate points with step-down logic.
      *
-     * First solver gets full points, each subsequent solver gets less.
+     * First solver gets full base_score.
+     * Second and subsequent solvers get base_score × (1 - degradation_rate).
      */
     protected function calculateCorrectPoints(Challenge $challenge): int
     {
@@ -66,35 +66,40 @@ class ScoringService
             ->where('is_correct', true)
             ->count();
 
-        // Determine degradation rate from event settings
+        // First solver gets full points
+        if ($solvedCount === 0) {
+            return (int) $challenge->base_score;
+        }
+
+        // Determine degradation rate from event settings (default 10%)
         $degradationRate = Setting::where('event_id', $challenge->event_id)
             ->where('key', 'degradation_rate')
             ->value('value');
 
-        // Default to 10% if not configured
         $degradationRate = $degradationRate !== null ? (float) $degradationRate : 0.10;
 
-        $multiplier = pow(1 - $degradationRate, $solvedCount);
-
-        // Minimum 10% of base score to prevent zero-point challenges
-        $minScore = (int) ceil($challenge->base_score * 0.10);
-
-        return max($minScore, (int) round($challenge->base_score * $multiplier));
+        return (int) floor($challenge->base_score * (1 - $degradationRate));
     }
 
     /**
      * Calculate point deductions for incorrect flags.
      * Returns a negative number (or zero).
+     *
+     * Penalty = base_score × penalty_rate (default 5%).
      */
-    protected function calculatePenalty(?int $eventId): int
+    protected function calculatePenalty(?int $eventId, int $baseScore): int
     {
-        $penalty = Setting::where('event_id', $eventId)
+        $penaltyRate = Setting::where('event_id', $eventId)
             ->where('key', 'penalty_deduction')
             ->value('value');
 
-        // Default to 0 penalty if not configured
-        $penalty = $penalty !== null ? (int) $penalty : 0;
+        // Default to 5% penalty if not configured
+        $penaltyRate = $penaltyRate !== null ? (float) $penaltyRate : 0.05;
 
-        return -1 * abs($penalty);
+        if ($penaltyRate <= 0) {
+            return 0;
+        }
+
+        return -1 * (int) floor($baseScore * $penaltyRate);
     }
 }

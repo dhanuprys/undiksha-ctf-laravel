@@ -4,7 +4,7 @@
 
 1. [Gambaran Umum](#gambaran-umum)
 2. [Alur Pengiriman Flag](#alur-pengiriman-flag)
-3. [Skor Dinamis (Dynamic Scoring)](#skor-dinamis)
+3. [Skor Step-Down](#skor-step-down)
 4. [Penalti Jawaban Salah](#penalti-jawaban-salah)
 5. [Sistem Peringkat (Ranking)](#sistem-peringkat)
 6. [Pengaturan Per Event](#pengaturan-per-event)
@@ -15,16 +15,15 @@
 
 ## Gambaran Umum
 
-Sistem penilaian CTF Undiksha menggunakan **Dynamic Scoring** — yaitu skor yang diperoleh peserta akan berkurang secara otomatis seiring bertambahnya jumlah tim yang berhasil menyelesaikan tantangan tersebut. Sistem ini memberikan keuntungan bagi tim yang berhasil menyelesaikan tantangan lebih awal (*first blood*).
+Sistem penilaian CTF Undiksha menggunakan **Step-Down Scoring** — yaitu tim pertama yang menyelesaikan tantangan mendapatkan **skor penuh**, sedangkan tim ke-2 dan seterusnya mendapatkan skor yang dikurangi sebesar persentase tertentu. Sistem ini memberikan keuntungan bagi tim yang berhasil menyelesaikan tantangan lebih awal (*first blood*).
 
 ### Komponen Utama
 
 | Komponen | Deskripsi |
 |----------|-----------|
 | **Skor Dasar** (`base_score`) | Poin maksimal yang bisa diperoleh untuk sebuah tantangan |
-| **Tingkat Degradasi** (`degradation_rate`) | Persentase penurunan skor per solver (0.00 - 1.00) |
-| **Penalti Jawaban Salah** (`penalty_deduction`) | Poin yang dikurangi saat mengirim flag yang salah |
-| **Skor Minimum** | 10% dari `base_score` (agar tantangan tidak pernah bernilai 0) |
+| **Pengurangan Solver ke-2+** (`degradation_rate`) | Persentase pengurangan skor untuk solver ke-2 dan seterusnya (default: 10%) |
+| **Persentase Penalti** (`penalty_deduction`) | Persentase skor dasar yang dikurangi per jawaban salah (default: 5%) |
 
 ---
 
@@ -60,10 +59,10 @@ Berikut adalah langkah-langkah yang terjadi saat peserta mengirim flag:
                       │         │
                 Benar │         │ Salah
                       ▼         ▼
-          ┌───────────────┐  ┌──────────────────┐
-          │ Cek: Tim sudah│  │ Hitung penalti   │
-          │ solve?        │  │ = -penalty_ded.  │
-          └──────┬────────┘  └────────┬─────────┘
+          ┌───────────────┐  ┌──────────────────────┐
+          │ Cek: Tim sudah│  │ Hitung penalti       │
+          │ solve?        │  │ = -(base_score × 5%) │
+          └──────┬────────┘  └────────┬─────────────┘
                  │                    │
           ┌──────┴──────┐             │
           │Belum        │Sudah        │
@@ -71,7 +70,7 @@ Berikut adalah langkah-langkah yang terjadi saat peserta mengirim flag:
    ┌──────────┐  ┌───────────┐       │
    │Hitung    │  │ Tolak:    │       │
    │skor      │  │ "Sudah    │       │
-   │dinamis   │  │  solved"  │       │
+   │step-down │  │  solved"  │       │
    └────┬─────┘  └───────────┘       │
         │                            │
         ▼                            ▼
@@ -84,50 +83,42 @@ Berikut adalah langkah-langkah yang terjadi saat peserta mengirim flag:
 
 ---
 
-## Skor Dinamis
+## Skor Step-Down
 
 ### Formula
 
 ```
-Skor = base_score × (1 - degradation_rate) ^ jumlah_tim_yang_sudah_solve
+Solver ke-1 (First Blood):
+  Skor = base_score
+
+Solver ke-2 dan seterusnya:
+  Skor = floor(base_score × (1 - degradation_rate))
 ```
 
 Dimana:
 - `base_score` = Skor dasar yang ditetapkan untuk tantangan
-- `degradation_rate` = Tingkat penurunan skor (dikonfigurasi per event)
-- `jumlah_tim_yang_sudah_solve` = Berapa banyak tim yang sudah menyelesaikan tantangan ini **sebelum** tim saat ini
-
-### Skor Minimum
-
-Agar tantangan tidak pernah bernilai 0 poin, ada batas skor minimum:
-
-```
-Skor Minimum = ceil(base_score × 0.10)
-```
-
-Artinya, setiap tantangan akan selalu memberikan **minimal 10%** dari skor dasarnya, berapapun jumlah tim yang sudah menyelesaikannya.
+- `degradation_rate` = Persentase pengurangan skor (dikonfigurasi per event, default: 0.10 / 10%)
 
 ### Keuntungan First Blood
 
-Tim pertama yang menyelesaikan tantangan mendapatkan **skor penuh** (`base_score`), karena pada saat itu `jumlah_tim_yang_sudah_solve = 0`.
+Tim pertama yang menyelesaikan tantangan mendapatkan **skor penuh** (`base_score`). Semua solver berikutnya mendapat skor yang sama, yaitu `base_score × 90%` (dengan default rate 10%).
 
-```
-Skor first blood = base_score × (1 - degradation_rate)^0 = base_score × 1 = base_score
-```
+**Tidak ada penurunan lebih lanjut** setelah solver ke-2. Solver ke-3, ke-4, ke-100, dst. semua mendapatkan skor yang sama dengan solver ke-2.
 
 ---
 
 ## Penalti Jawaban Salah
 
-Setiap kali peserta mengirim flag yang **salah**, tim akan mendapat **pengurangan poin**:
+Setiap kali peserta mengirim flag yang **salah**, tim akan mendapat **pengurangan poin** berdasarkan persentase dari skor dasar tantangan:
 
 ```
-Penalti = -1 × penalty_deduction
+Penalti = floor(base_score × penalty_rate)
 ```
 
-- Jika `penalty_deduction = 0`, maka tidak ada penalti (default)
-- Jika `penalty_deduction = 5`, maka setiap jawaban salah mengurangi 5 poin dari total skor tim
+- Jika `penalty_rate = 0.05` (5%), dan `base_score = 500`, maka penalti = `floor(500 × 0.05)` = **-25 poin**
+- Jika `penalty_rate = 0`, maka tidak ada penalti
 - Penalti dihitung untuk **setiap** submit flag yang salah (bukan per tantangan)
+- Penalti bersifat **proporsional** — tantangan dengan skor lebih tinggi memiliki penalti lebih besar
 
 > **Catatan:** Pengurangan penalti bisa membuat total skor tim menjadi **negatif** jika terlalu banyak mengirim jawaban salah.
 
@@ -183,9 +174,10 @@ Setiap event memiliki pengaturan scoring yang bisa dikonfigurasi oleh admin mela
 
 | Pengaturan | Deskripsi | Default | Range |
 |------------|-----------|---------|-------|
-| `degradation_rate` | Tingkat penurunan skor | `0.05` (5%) | 0.00 - 1.00 |
-| `penalty_deduction` | Pengurangan poin per jawaban salah | `0` | 0 - ∞ |
-| `max_team_size` | Jumlah maksimal anggota per tim | `5` | 1 - 100 |
+| `degradation_rate` | Persentase pengurangan skor untuk solver ke-2+ | `0.10` (10%) | 0.00 - 1.00 |
+| `penalty_deduction` | Persentase skor dasar yang dikurangi per jawaban salah | `0.05` (5%) | 0.00 - 1.00 |
+| `max_team_size` | Jumlah maksimal anggota per tim | `3` | 1 - 100 |
+| `show_solver_count` | Tampilkan jumlah solver ke peserta | `true` | true / false |
 
 ### Cara Mengatur
 
@@ -202,20 +194,18 @@ Setiap event memiliki pengaturan scoring yang bisa dikonfigurasi oleh admin mela
 
 ### Skenario
 
-Sebuah tantangan dengan `base_score = 500` pada event dengan `degradation_rate = 0.10` (10%) dan `penalty_deduction = 5`.
+Sebuah tantangan dengan `base_score = 500` pada event dengan `degradation_rate = 0.10` (10%) dan `penalty_deduction = 0.05` (5%).
 
 ### Skor per Solver
 
 | Solver Ke- | Formula | Skor yang Didapat |
 |------------|---------|-------------------|
-| 1 (First Blood) | `500 × (1 - 0.10)^0 = 500 × 1.00` | **500 poin** |
-| 2 | `500 × (1 - 0.10)^1 = 500 × 0.90` | **450 poin** |
-| 3 | `500 × (1 - 0.10)^2 = 500 × 0.81` | **405 poin** |
-| 4 | `500 × (1 - 0.10)^3 = 500 × 0.729` | **365 poin** |
-| 5 | `500 × (1 - 0.10)^4 = 500 × 0.6561` | **328 poin** |
-| 10 | `500 × (1 - 0.10)^9 = 500 × 0.3874` | **194 poin** |
-| 20 | `500 × (1 - 0.10)^19 = 500 × 0.1351` | **68 poin** |
-| 44+ | Skor minimum = `ceil(500 × 0.10)` | **50 poin** |
+| 1 (First Blood) | `base_score = 500` | **500 poin** |
+| 2 | `floor(500 × (1 - 0.10)) = floor(500 × 0.90)` | **450 poin** |
+| 3 | Sama dengan solver ke-2 | **450 poin** |
+| 4 | Sama dengan solver ke-2 | **450 poin** |
+| 10 | Sama dengan solver ke-2 | **450 poin** |
+| 100 | Sama dengan solver ke-2 | **450 poin** |
 
 ### Skenario Penalti
 
@@ -223,12 +213,20 @@ Tim A mencoba menyelesaikan tantangan di atas:
 
 | Aksi | Poin | Skor Kumulatif |
 |------|------|----------------|
-| Submit salah 1 | -5 | -5 |
-| Submit salah 2 | -5 | -10 |
-| Submit salah 3 | -5 | -15 |
-| Submit **benar** (solver ke-3) | +405 | +390 |
+| Submit salah 1 | `floor(500 × 0.05)` = -25 | -25 |
+| Submit salah 2 | -25 | -50 |
+| Submit salah 3 | -25 | -75 |
+| Submit **benar** (solver ke-3) | +450 | +375 |
 
-**Total skor Tim A untuk tantangan ini: 390 poin** (405 - 15)
+**Total skor Tim A untuk tantangan ini: 375 poin** (450 - 75)
+
+### Perbandingan Antar Tantangan
+
+| Tantangan | Base Score | Penalti per Salah (5%) | Skor 1st | Skor 2nd+ |
+|-----------|-----------|----------------------|----------|-----------|
+| Easy | 100 | -5 | 100 | 90 |
+| Medium | 250 | -12 | 250 | 225 |
+| Hard | 500 | -25 | 500 | 450 |
 
 ---
 
@@ -239,7 +237,7 @@ Tim A mencoba menyelesaikan tantangan di atas:
 Sistem menggunakan **database-level locking** (`SELECT ... FOR UPDATE`) di dalam transaksi untuk mencegah:
 
 - Dua anggota tim yang mengirim flag benar secara bersamaan mendapat poin ganda
-- Kondisi race condition pada perhitungan skor dinamis
+- Kondisi race condition pada perhitungan skor
 
 ### Throttling
 

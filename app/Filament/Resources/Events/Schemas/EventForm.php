@@ -44,20 +44,22 @@ class EventForm
                     ->schema([
                         Grid::make(3)->schema([
                             TextInput::make('degradation_rate')
-                                ->label('Tingkat Degradasi')
-                                ->helperText('Rasio penurunan skor per tim yang solve (0.01 - 1.00). Contoh: 0.10 berarti 10% penurunan per solver.')
+                                ->label('Pengurangan Solver ke-2+')
+                                ->helperText('Persentase pengurangan skor untuk solver ke-2 dan seterusnya. Solver pertama selalu mendapat skor penuh. Contoh: 0.10 = pengurangan 10%.')
+                                ->numeric()
+                                ->minValue(0)
+                                ->maxValue(1)
+                                ->step(0.01)
+                                ->default(0.10)
+                                ->required(),
+                            TextInput::make('penalty_deduction')
+                                ->label('Persentase Penalti Jawaban Salah')
+                                ->helperText('Persentase skor dasar yang dikurangi per jawaban salah. Contoh: 0.05 = 5% dari base score.')
                                 ->numeric()
                                 ->minValue(0)
                                 ->maxValue(1)
                                 ->step(0.01)
                                 ->default(0.05)
-                                ->required(),
-                            TextInput::make('penalty_deduction')
-                                ->label('Pengurangan Penalti')
-                                ->helperText('Poin yang dikurangi jika submit flag salah. 0 = tidak ada penalti.')
-                                ->numeric()
-                                ->minValue(0)
-                                ->default(0)
                                 ->required(),
                             TextInput::make('max_team_size')
                                 ->label('Maks Anggota Tim')

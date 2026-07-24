@@ -15,5 +15,10 @@
 
 <svelte:head>
     <title>{fullTitle}</title>
+    <meta property="og:title" content={fullTitle} />
+    <meta name="twitter:title" content={fullTitle} />
+    {#if typeof window !== 'undefined'}
+        <meta property="og:url" content={window.location.href} />
+    {/if}
     {@render children?.()}
 </svelte:head>

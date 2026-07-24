@@ -14,7 +14,7 @@
         SidebarFooter,
         SidebarHeader,
         SidebarMenu,
-        SidebarMenuButton,
+        // SidebarMenuButton,
         SidebarMenuItem,
     } from '@/components/ui/sidebar';
     import { toUrl } from '@/lib/utils';
@@ -56,7 +56,6 @@
     <SidebarHeader>
         <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton size="lg" asChild>
                     {#snippet children(props)}
                         <Link
                             {...props}
@@ -66,7 +65,6 @@
                             <AppLogo />
                         </Link>
                     {/snippet}
-                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
     </SidebarHeader>

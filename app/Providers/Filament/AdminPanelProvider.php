@@ -35,7 +35,9 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandName('CTF Undiksha Admin')
+            ->brandName('Ganesha CTF Platform')
+            ->brandLogo(asset('images/ganesha-ctf-platform-logo.webp'))
+            ->brandLogoHeight('2rem')
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 NavigationGroup::make()

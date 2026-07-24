@@ -3,7 +3,7 @@
     import { Terminal, ArrowRight } from 'lucide-svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { toUrl } from '@/lib/utils';
-    import { dashboard, login, register } from '@/routes';
+    import { dashboard, login } from '@/routes';
 
     const auth = $derived(page.props.auth);
     const appName = import.meta.env.VITE_APP_NAME || 'CTF Undiksha';
@@ -50,11 +50,8 @@
                         </Link>
                     {/if}
                 {:else}
-                    <Link href={toUrl(login())} class="text-xs font-mono font-bold tracking-wider text-slate-500 hover:text-slate-900 transition-colors">
+                    <Link href={toUrl(login())} class="inline-flex h-9 items-center justify-center rounded-lg bg-cyan-600 px-4 text-xs font-mono font-bold tracking-wider text-white shadow-[0_4px_12px_rgba(8,145,178,0.15)] hover:shadow-[0_4px_20px_rgba(8,145,178,0.3)] hover:bg-cyan-500 transition-all">
                         SIGN_IN
-                    </Link>
-                    <Link href={toUrl(register())} class="inline-flex h-9 items-center justify-center rounded-lg bg-cyan-600 px-4 text-xs font-mono font-bold tracking-wider text-white shadow-[0_4px_12px_rgba(8,145,178,0.15)] hover:shadow-[0_4px_20px_rgba(8,145,178,0.3)] hover:bg-cyan-500 transition-all">
-                        REGISTER
                     </Link>
                 {/if}
             </nav>
@@ -100,12 +97,9 @@
                             </Link>
                         {/if}
                     {:else}
-                        <Link href={toUrl(register())} class="group inline-flex h-12 items-center justify-center rounded-xl bg-cyan-600 px-8 text-sm font-mono font-bold tracking-wider text-white shadow-[0_4px_12px_rgba(8,145,178,0.15)] hover:shadow-[0_4px_25px_rgba(8,145,178,0.35)] hover:bg-cyan-500 transition-all w-full sm:w-auto">
-                            CREATE_CREDENTIALS
-                            <ArrowRight class="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
-                        </Link>
-                        <Link href={toUrl(login())} class="inline-flex h-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-sm px-8 text-sm font-mono font-bold tracking-wider transition-all w-full sm:w-auto">
+                        <Link href={toUrl(login())} class="group inline-flex h-12 items-center justify-center rounded-xl bg-cyan-600 px-8 text-sm font-mono font-bold tracking-wider text-white shadow-[0_4px_12px_rgba(8,145,178,0.15)] hover:shadow-[0_4px_25px_rgba(8,145,178,0.35)] hover:bg-cyan-500 transition-all w-full sm:w-auto">
                             AUTHENTICATE
+                            <ArrowRight class="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
                         </Link>
                     {/if}
                 </div>

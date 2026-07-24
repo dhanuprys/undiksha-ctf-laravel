@@ -17,7 +17,6 @@
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import { Spinner } from '@/components/ui/spinner';
-    import { register } from '@/routes';
     import { store } from '@/routes/login';
     import { request } from '@/routes/password';
 
@@ -97,9 +96,5 @@
             </Button>
         </div>
 
-        <div class="text-center text-sm text-muted-foreground">
-            Belum punya akun?
-            <TextLink href={register()}>Daftar</TextLink>
-        </div>
     {/snippet}
 </Form>

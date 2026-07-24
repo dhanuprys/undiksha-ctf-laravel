@@ -33,7 +33,7 @@
             <Input
                 id={`flag-${challengeId}`}
                 type="text"
-                placeholder={'ctfundiksha{...}'}
+                placeholder={'ganeshactf{...}'}
                 bind:value={form.flag}
                 {disabled}
                 class="flex-1 font-mono"

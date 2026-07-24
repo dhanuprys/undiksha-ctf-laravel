@@ -1,4 +1,4 @@
-# Sistem Penilaian (Scoring System) — CTF Undiksha
+# Sistem Penilaian (Scoring System) — Ganesha CTF Platform
 
 ## Daftar Isi
 
@@ -15,7 +15,7 @@
 
 ## Gambaran Umum
 
-Sistem penilaian CTF Undiksha menggunakan **Step-Down Scoring** — yaitu tim pertama yang menyelesaikan tantangan mendapatkan **skor penuh**, sedangkan tim ke-2 dan seterusnya mendapatkan skor yang dikurangi sebesar persentase tertentu. Sistem ini memberikan keuntungan bagi tim yang berhasil menyelesaikan tantangan lebih awal (*first blood*).
+Sistem penilaian Ganesha CTF Platform menggunakan **Step-Down Scoring** — yaitu tim pertama yang menyelesaikan tantangan mendapatkan **skor penuh**, sedangkan tim ke-2 dan seterusnya mendapatkan skor yang dikurangi sebesar persentase tertentu. Sistem ini memberikan keuntungan bagi tim yang berhasil menyelesaikan tantangan lebih awal (*first blood*).
 
 ### Komponen Utama
 

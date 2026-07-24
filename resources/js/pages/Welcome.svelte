@@ -6,7 +6,7 @@
     import { dashboard, login } from '@/routes';
 
     const auth = $derived(page.props.auth);
-    const appName = import.meta.env.VITE_APP_NAME || 'CTF Undiksha';
+    const appName = import.meta.env.VITE_APP_NAME || 'Ganesha CTF Platform';
 </script>
 
 <AppHead title="Welcome" />
@@ -34,7 +34,7 @@
             <div class="flex items-center gap-2 font-mono">
                 <Terminal class="h-5 w-5 text-cyan-600" />
                 <span class="text-sm font-bold tracking-[0.2em] uppercase text-slate-800">
-                    UNDIKSHA CTF<span class="animate-pulse text-cyan-600">_</span>
+                    GANESHA CTF PLATFORM<span class="animate-pulse text-cyan-600">_</span>
                 </span>
             </div>
             
@@ -145,7 +145,7 @@
                             <span>cat flag.txt</span>
                         </div>
                         <div class="pl-4 font-bold text-slate-800 tracking-wider">
-                            {'UNDIKSHA{myst3r10us_l1ght_m0d3}'}
+                            {'GANESHA{myst3r10us_l1ght_m0d3}'}
                         </div>
                     </div>
                 </div>

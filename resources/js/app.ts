@@ -4,7 +4,7 @@ import AuthLayout from '@/layouts/AuthLayout.svelte';
 import SettingsLayout from '@/layouts/settings/Layout.svelte';
 import { initializeFlashToast } from '@/lib/flash-toast';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Undiksha CTF';
+const appName = import.meta.env.VITE_APP_NAME || 'Ganesha CTF Platform';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

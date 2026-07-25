@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Challenge;
 use App\Models\Event;
+use App\Services\ScoringService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -12,6 +13,10 @@ use Stevebauman\Purify\Facades\Purify;
 
 class ChallengeController extends Controller
 {
+    public function __construct(
+        protected ScoringService $scoringService,
+    ) {}
+
     /**
      * Sanitize HTML content using HTMLPurifier via stevebauman/purify.
      */
@@ -50,7 +55,7 @@ class ChallengeController extends Controller
             return Inertia::render('competition/Challenges', [
                 'categories' => [],
                 'status' => 'not_started',
-                'start_time' => $activeEvent->start_time ? $activeEvent->start_time->toIso8601String() : null,
+                'start_time' => $activeEvent->start_time?->toIso8601String(),
             ]);
         }
 
@@ -63,35 +68,42 @@ class ChallengeController extends Controller
         }
 
         $showSolverCount = filter_var($activeEvent->getSetting('show_solver_count', true), FILTER_VALIDATE_BOOLEAN);
+        $degradationRate = $this->scoringService->getDegradationRate($activeEvent->id);
 
-        // Get all categories that have active challenges in this event
         $categories = Category::whereHas('challenges', function ($query) use ($activeEvent) {
             $query->where('event_id', $activeEvent->id)->where('is_active', true);
         })
-            ->with(['challenges' => function ($query) use ($activeEvent, $showSolverCount) {
+            ->with(['challenges' => function ($query) use ($activeEvent) {
                 $query->where('event_id', $activeEvent->id)
                     ->where('is_active', true)
-                    ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty');
-
-                if ($showSolverCount) {
-                    $query->withCount(['submissions as solve_count' => function ($q) {
+                    ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty')
+                    ->withCount(['submissions as solve_count' => function ($q) {
                         $q->where('is_correct', true);
                     }]);
-                }
             }])
             ->get();
 
-        // Get all correct submissions for the current team to mark solved challenges
-        $solvedChallengeIds = $currentTeam->submissions()
+        $teamCorrectSubmissions = $currentTeam->submissions()
             ->where('is_correct', true)
-            ->pluck('challenge_id')
-            ->toArray();
+            ->get()
+            ->keyBy('challenge_id');
 
-        // Transform data to include solved_by_team flag and sanitize description
-        $categories->transform(function ($category) use ($solvedChallengeIds) {
-            $category->challenges->transform(function ($challenge) use ($solvedChallengeIds) {
-                $challenge->solved_by_team = in_array($challenge->id, $solvedChallengeIds);
+        $categories->transform(function ($category) use ($teamCorrectSubmissions, $degradationRate, $showSolverCount) {
+            $category->challenges->transform(function ($challenge) use ($teamCorrectSubmissions, $degradationRate, $showSolverCount) {
+                $teamSubmission = $teamCorrectSubmissions->get($challenge->id);
+
+                $challenge->solved_by_team = $teamSubmission !== null;
+                $challenge->points_awarded = $teamSubmission?->points_awarded;
+                $challenge->dynamic_score = $this->scoringService->calculateDynamicScore(
+                    $challenge->base_score,
+                    $challenge->solve_count,
+                    $degradationRate,
+                );
                 $challenge->description = $this->sanitizeHtml($challenge->description);
+
+                if (! $showSolverCount) {
+                    unset($challenge->solve_count);
+                }
 
                 return $challenge;
             });
@@ -124,13 +136,19 @@ class ChallengeController extends Controller
         }
 
         $challenge->load(['category', 'attachments']);
-
-        // Hide sensitive info
         $challenge->makeHidden(['flag', 'event_id', 'is_active', 'created_at', 'updated_at']);
 
         $challenge->description = $this->sanitizeHtml($challenge->description);
+
         $showSolverCount = filter_var($activeEvent->getSetting('show_solver_count', true), FILTER_VALIDATE_BOOLEAN);
-        $challenge->solve_count = $showSolverCount ? $challenge->submissions()->where('is_correct', true)->count() : null;
+        $solveCount = $challenge->submissions()->where('is_correct', true)->count();
+
+        $challenge->solve_count = $showSolverCount ? $solveCount : null;
+        $challenge->dynamic_score = $this->scoringService->calculateDynamicScore(
+            $challenge->base_score,
+            $solveCount,
+            $this->scoringService->getDegradationRate($activeEvent->id),
+        );
 
         $teamCorrectSubmission = $currentTeam->submissions()
             ->where('challenge_id', $challenge->id)

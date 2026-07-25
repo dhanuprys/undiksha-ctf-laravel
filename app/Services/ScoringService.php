@@ -37,9 +37,20 @@ class ScoringService
                     throw new Exception('Tantangan ini sudah diselesaikan oleh tim Anda.');
                 }
 
-                $points = $this->calculateCorrectPoints($lockedChallenge);
+                $solvedCount = Submission::where('challenge_id', $lockedChallenge->id)
+                    ->where('is_correct', true)
+                    ->count();
+
+                $points = $this->calculateDynamicScore(
+                    $lockedChallenge->base_score,
+                    $solvedCount,
+                    $this->getDegradationRate($lockedChallenge->event_id),
+                );
             } else {
-                $points = $this->calculatePenalty($lockedChallenge->event_id, $lockedChallenge->base_score);
+                $points = $this->calculatePenalty(
+                    $lockedChallenge->base_score,
+                    $this->getPenaltyRate($lockedChallenge->event_id),
+                );
             }
 
             return Submission::create([
@@ -54,52 +65,58 @@ class ScoringService
     }
 
     /**
-     * Calculate points with step-down logic.
+     * Calculate the dynamic score for a challenge based on how many teams have solved it.
      *
-     * First solver gets full base_score.
-     * Second and subsequent solvers get base_score × (1 - degradation_rate).
+     * First solver gets the full base_score.
+     * Subsequent solvers get base_score × (1 - degradationRate).
      */
-    protected function calculateCorrectPoints(Challenge $challenge): int
+    public function calculateDynamicScore(int $baseScore, int $solvedCount, float $degradationRate): int
     {
-        // Count how many teams have already solved this challenge
-        $solvedCount = Submission::where('challenge_id', $challenge->id)
-            ->where('is_correct', true)
-            ->count();
-
-        // First solver gets full points
         if ($solvedCount === 0) {
-            return (int) $challenge->base_score;
+            return $baseScore;
         }
 
-        // Determine degradation rate from event settings (default 10%)
-        $degradationRate = Setting::where('event_id', $challenge->event_id)
-            ->where('key', 'degradation_rate')
-            ->value('value');
-
-        $degradationRate = $degradationRate !== null ? (float) $degradationRate : 0.10;
-
-        return (int) floor($challenge->base_score * (1 - $degradationRate));
+        return (int) floor($baseScore * (1 - $degradationRate));
     }
 
     /**
      * Calculate point deductions for incorrect flags.
      * Returns a negative number (or zero).
      *
-     * Penalty = base_score × penalty_rate (default 5%).
+     * Penalty = base_score × penaltyRate.
      */
-    protected function calculatePenalty(?int $eventId, int $baseScore): int
+    public function calculatePenalty(int $baseScore, float $penaltyRate): int
     {
-        $penaltyRate = Setting::where('event_id', $eventId)
-            ->where('key', 'penalty_deduction')
-            ->value('value');
-
-        // Default to 5% penalty if not configured
-        $penaltyRate = $penaltyRate !== null ? (float) $penaltyRate : 0.05;
-
         if ($penaltyRate <= 0) {
             return 0;
         }
 
         return -1 * (int) floor($baseScore * $penaltyRate);
+    }
+
+    /**
+     * Get the degradation rate for an event from its settings.
+     * Defaults to 10% if not configured.
+     */
+    public function getDegradationRate(?int $eventId): float
+    {
+        $value = Setting::where('event_id', $eventId)
+            ->where('key', 'degradation_rate')
+            ->value('value');
+
+        return $value !== null ? (float) $value : 0.10;
+    }
+
+    /**
+     * Get the penalty rate for an event from its settings.
+     * Defaults to 5% if not configured.
+     */
+    public function getPenaltyRate(?int $eventId): float
+    {
+        $value = Setting::where('event_id', $eventId)
+            ->where('key', 'penalty_deduction')
+            ->value('value');
+
+        return $value !== null ? (float) $value : 0.05;
     }
 }

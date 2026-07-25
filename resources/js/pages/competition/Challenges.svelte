@@ -226,7 +226,9 @@
                                                 <div
                                                     class="text-lg font-bold text-primary whitespace-nowrap ml-2"
                                                 >
-                                                    {challenge.base_score} pts
+                                                    {challenge.solved_by_team
+                                                        ? challenge.points_awarded
+                                                        : challenge.dynamic_score} pts
                                                 </div>
                                             </div>
                                             <CardTitle

@@ -99,7 +99,9 @@
                             >
                                 <span
                                     class="text-3xl sm:text-4xl font-black leading-none"
-                                    >{challenge.base_score}</span
+                                    >{challenge.solved_by_team
+                                        ? challenge.points_awarded
+                                        : challenge.dynamic_score}</span
                                 >
                                 <span
                                     class="text-xs font-semibold uppercase tracking-widest mt-1 opacity-80"

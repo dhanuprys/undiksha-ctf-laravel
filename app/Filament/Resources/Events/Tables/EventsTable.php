@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Events\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -29,10 +30,12 @@ class EventsTable
                 TextColumn::make('start_time')
                     ->label('Waktu Mulai')
                     ->dateTime()
+                    ->timezone(config('app.timezone'))
                     ->sortable(),
                 TextColumn::make('end_time')
                     ->label('Waktu Berakhir')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->timezone(config('app.timezone')),
                 TextColumn::make('teams_count')
                     ->label('Jumlah Tim')
                     ->counts('teams')
@@ -58,7 +61,7 @@ class EventsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                \Filament\Actions\DeleteAction::make()->requiresConfirmation(),
+                DeleteAction::make()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

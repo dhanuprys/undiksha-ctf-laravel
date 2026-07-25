@@ -31,6 +31,7 @@
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import { Spinner } from '@/components/ui/spinner';
+    import { formatDate, formatDateTime } from '@/lib/formatDate';
     import { index as challengesIndexRoute } from '@/routes/challenges';
     import { join } from '@/routes/team';
     import type { Team } from '@/types/ctf';
@@ -110,14 +111,7 @@
                             <span
                                 class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary border border-primary/20"
                             >
-                                <Star class="h-3 w-3" />
-                                Didirikan {new Date(
-                                    team.created_at,
-                                ).toLocaleDateString('id-ID', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                })}
+                                Didirikan {formatDate(team.created_at)}
                             </span>
                         </div>
                     </div>
@@ -362,16 +356,8 @@
                                                         class="h-3.5 w-3.5"
                                                     />
                                                     <span
-                                                        >{new Date(
+                                                        >{formatDateTime(
                                                             submission.created_at,
-                                                        ).toLocaleString(
-                                                            'id-ID',
-                                                            {
-                                                                dateStyle:
-                                                                    'medium',
-                                                                timeStyle:
-                                                                    'short',
-                                                            },
                                                         )}</span
                                                     >
                                                 </div>

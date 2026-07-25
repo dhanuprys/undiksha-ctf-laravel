@@ -17,6 +17,7 @@
         CardTitle,
         CardContent,
     } from '@/components/ui/card';
+    import { formatTime } from '@/lib/formatDate';
     import type { LeaderboardEntry, LeaderboardGraphData } from '@/types/ctf';
 
     let {
@@ -183,12 +184,9 @@
                                                 class="flex items-center gap-1"
                                             >
                                                 <Clock class="h-3 w-3" />
-                                                {new Date(
+                                                {formatTime(
                                                     entry.last_solve_time,
-                                                ).toLocaleTimeString('id-ID', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                })}
+                                                )}
                                             </span>
                                         {/if}
                                     </div>

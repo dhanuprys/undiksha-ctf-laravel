@@ -48,7 +48,16 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'activeEvent' => $activeEvent?->only(['id', 'name', 'year', 'start_time', 'end_time', 'is_active']),
+            'activeEvent' => $activeEvent ? [
+                'id' => $activeEvent->id,
+                'name' => $activeEvent->name,
+                'year' => $activeEvent->year,
+                'start_time' => $activeEvent->start_time?->toIso8601String(),
+                'end_time' => $activeEvent->end_time?->toIso8601String(),
+                'is_active' => $activeEvent->is_active,
+            ] : null,
+            'serverTime' => now()->toIso8601String(),
+            'serverTimezone' => config('app.timezone'),
             'auth' => [
                 'user' => $user ? array_merge($user->toArray(), [
                     'current_team' => $currentTeam,

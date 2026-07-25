@@ -37,6 +37,7 @@
         CardTitle,
     } from '@/components/ui/card';
     import { Progress } from '@/components/ui/progress';
+    import { formatDateTime, formatTime } from '@/lib/formatDate';
     import { index as challengesIndexRoute } from '@/routes/challenges';
     import { index as leaderboardIndexRoute } from '@/routes/leaderboard';
     import { show as showTeamRoute } from '@/routes/team';
@@ -299,14 +300,7 @@
                                 <p
                                     class="text-xl font-semibold mb-4 text-foreground"
                                 >
-                                    {activeEvent.start_time
-                                        ? new Date(
-                                              activeEvent.start_time,
-                                          ).toLocaleString('id-ID', {
-                                              dateStyle: 'long',
-                                              timeStyle: 'short',
-                                          })
-                                        : 'Belum ditentukan'}
+                                    {formatDateTime(activeEvent.start_time)}
                                 </p>
                                 <div
                                     class="bg-background/80 rounded-lg p-3 border border-border/50 shadow-sm"
@@ -332,14 +326,7 @@
                                 <p
                                     class="text-xl font-semibold mb-4 text-foreground"
                                 >
-                                    {activeEvent.end_time
-                                        ? new Date(
-                                              activeEvent.end_time,
-                                          ).toLocaleString('id-ID', {
-                                              dateStyle: 'long',
-                                              timeStyle: 'short',
-                                          })
-                                        : 'Belum ditentukan'}
+                                    {formatDateTime(activeEvent.end_time)}
                                 </p>
                                 <div
                                     class="bg-background/80 rounded-lg p-3 border border-border/50 shadow-sm"
@@ -427,14 +414,8 @@
                                                 >
                                                     <Clock class="h-3 w-3" />
                                                     <span
-                                                        >{new Date(
+                                                        >{formatTime(
                                                             submission.created_at,
-                                                        ).toLocaleTimeString(
-                                                            'id-ID',
-                                                            {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
-                                                            },
                                                         )}</span
                                                     >
                                                 </div>

@@ -18,6 +18,7 @@
         CardTitle,
         CardFooter,
     } from '@/components/ui/card';
+    import { getServerOffset } from '@/lib/formatDate';
     import { show } from '@/routes/challenges';
     import { show as showTeam } from '@/routes/team';
     import type { Category } from '@/types/ctf';
@@ -46,12 +47,17 @@
 
     let timeRemaining = $state('');
 
+    /** Returns the current server-corrected timestamp in ms. */
+    function serverNow(): number {
+        return Date.now() + getServerOffset();
+    }
+
     $effect(() => {
         if (status === 'not_started' && start_time) {
             const target = new Date(start_time).getTime();
 
             const updateTimer = () => {
-                const now = new Date().getTime();
+                const now = serverNow();
                 const diff = target - now;
 
                 if (diff <= 0) {

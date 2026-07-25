@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import { Badge } from '@/components/ui/badge';
+    import { getServerOffset } from '@/lib/formatDate';
 
     let {
         targetDate,
@@ -13,6 +14,11 @@
     let timeRemaining = $state('');
     let interval: ReturnType<typeof setInterval>;
 
+    /** Returns the current server-corrected timestamp in ms. */
+    function serverNow(): number {
+        return Date.now() + getServerOffset();
+    }
+
     function calculateTimeRemaining() {
         if (!targetDate) {
             timeRemaining = 'Tidak ada waktu yang ditentukan';
@@ -21,7 +27,7 @@
         }
 
         const target = new Date(targetDate).getTime();
-        const now = new Date().getTime();
+        const now = serverNow();
         const difference = target - now;
 
         if (difference < 0) {
@@ -62,10 +68,7 @@
     onMount(() => {
         calculateTimeRemaining();
 
-        if (
-            targetDate &&
-            new Date(targetDate).getTime() > new Date().getTime()
-        ) {
+        if (targetDate && new Date(targetDate).getTime() > serverNow()) {
             interval = setInterval(calculateTimeRemaining, 1000);
         }
     });

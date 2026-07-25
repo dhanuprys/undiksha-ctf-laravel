@@ -28,10 +28,16 @@ class EventForm
                                 ->required()
                                 ->numeric(),
                             DateTimePicker::make('start_time')
-                                ->label('Waktu Mulai'),
+                                ->label('Waktu Mulai')
+                                ->timezone(config('app.timezone'))
+                                ->seconds(false)
+                                ->helperText('Zona waktu: '.config('app.timezone')),
                             DateTimePicker::make('end_time')
                                 ->label('Waktu Berakhir')
-                                ->after('start_time'),
+                                ->timezone(config('app.timezone'))
+                                ->seconds(false)
+                                ->after('start_time')
+                                ->helperText('Zona waktu: '.config('app.timezone')),
                             Toggle::make('is_active')
                                 ->label('Aktif')
                                 ->default(false)

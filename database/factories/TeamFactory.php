@@ -21,7 +21,7 @@ class TeamFactory extends Factory
     {
         return [
             'event_id' => Event::factory(),
-            'name' => fake()->catchPhrase(),
+            'name' => 'Team ' . Str::random(6),
             'join_code' => Str::upper(Str::random(8)),
         ];
     }

@@ -11,11 +11,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Create Admin
-        User::factory()->admin()->create([
-            'name' => 'Admin CTF',
-            'email' => 'admin@undiksha.ac.id',
-            'password' => bcrypt('password'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@undiksha.ac.id'],
+            [
+                'name' => 'Admin CTF',
+                'password' => bcrypt('password'),
+                'is_admin' => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
         // 2. Create Categories
         $categoryNames = ['Web Exploitation', 'Reverse Engineering', 'Cryptography', 'Forensics', 'Miscellaneous'];

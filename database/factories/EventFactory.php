@@ -18,11 +18,11 @@ class EventFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Bulfest CTF '.fake()->year(),
-            'year' => fake()->year(),
-            'is_active' => fake()->boolean(),
-            'start_time' => fake()->dateTimeBetween('-1 month', '+1 month'),
-            'end_time' => fake()->dateTimeBetween('+1 month', '+2 months'),
+            'name' => 'Bulfest CTF ' . date('Y'),
+            'year' => date('Y'),
+            'is_active' => (bool) mt_rand(0, 1),
+            'start_time' => now()->subDays(mt_rand(1, 30)),
+            'end_time' => now()->addDays(mt_rand(1, 30)),
         ];
     }
 }

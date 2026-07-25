@@ -24,7 +24,7 @@ class SubmissionFactory extends Factory
             'user_id' => User::factory(),
             'team_id' => Team::factory(),
             'challenge_id' => Challenge::factory(),
-            'submitted_flag' => fake()->word(),
+            'submitted_flag' => 'CTF{' . \Illuminate\Support\Str::random(10) . '}',
             'is_correct' => false,
             'points_awarded' => 0,
         ];

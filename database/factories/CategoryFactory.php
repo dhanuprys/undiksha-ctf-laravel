@@ -18,8 +18,8 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->randomElement(['Cryptography', 'Web Exploitation', 'Reverse Engineering', 'Forensics', 'Miscellaneous', 'OSINT', 'Pwn']),
-            'description' => fake()->sentence(),
+            'name' => 'Category ' . \Illuminate\Support\Str::random(5),
+            'description' => 'Dummy category description',
         ];
     }
 }

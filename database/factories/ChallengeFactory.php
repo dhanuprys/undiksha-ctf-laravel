@@ -23,11 +23,11 @@ class ChallengeFactory extends Factory
         return [
             'event_id' => Event::factory(),
             'category_id' => Category::factory(),
-            'title' => fake()->sentence(3),
-            'description' => fake()->paragraph(),
-            'base_score' => fake()->numberBetween(1, 5) * 100,
-            'difficulty' => fake()->randomElement([ChallengeLevel::Easy, ChallengeLevel::Medium, ChallengeLevel::Hard, ChallengeLevel::VeryHard]),
-            'flag' => 'CTF{'.fake()->word().'_'.fake()->word().'}',
+            'title' => 'Challenge ' . \Illuminate\Support\Str::random(5),
+            'description' => 'This is a dummy challenge description generated without faker. Find the flag.',
+            'base_score' => mt_rand(1, 5) * 100,
+            'difficulty' => [ChallengeLevel::Easy, ChallengeLevel::Medium, ChallengeLevel::Hard, ChallengeLevel::VeryHard][array_rand([ChallengeLevel::Easy, ChallengeLevel::Medium, ChallengeLevel::Hard, ChallengeLevel::VeryHard])],
+            'flag' => 'CTF{'.\Illuminate\Support\Str::random(6).'_'.\Illuminate\Support\Str::random(6).'}',
             'is_active' => true,
         ];
     }

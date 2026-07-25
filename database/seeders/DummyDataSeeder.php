@@ -65,7 +65,7 @@ class DummyDataSeeder extends Seeder
         });
 
         // 2. Events (Active, Past, Upcoming)
-        $activeEvent = Event::factory()->create([
+        $activeEvent = Event::create([
             'name' => 'Dummy Active CTF '.date('Y').' - '.Str::random(4), // Ensure unique names
             'year' => date('Y'),
             'is_active' => true,
@@ -73,7 +73,7 @@ class DummyDataSeeder extends Seeder
             'end_time' => now()->addWeek(), // active until exactly one more week from today
         ]);
 
-        $pastEvent = Event::factory()->create([
+        $pastEvent = Event::create([
             'name' => 'Dummy Past CTF '.(date('Y') - 1).' - '.Str::random(4),
             'year' => date('Y') - 1,
             'is_active' => false,
@@ -81,7 +81,7 @@ class DummyDataSeeder extends Seeder
             'end_time' => now()->subMonths(3)->addDays(5),
         ]);
 
-        $upcomingEvent = Event::factory()->create([
+        $upcomingEvent = Event::create([
             'name' => 'Dummy Upcoming CTF '.(date('Y') + 1).' - '.Str::random(4),
             'year' => date('Y') + 1,
             'is_active' => false,
@@ -210,7 +210,8 @@ class DummyDataSeeder extends Seeder
                 if ($team->id === $teamOnlyIncorrect->id) {
                     $challenge = $challenges->random();
                     $user = $teamUsers->random();
-                    $submitTime = fake()->dateTimeBetween($event->start_time, $event->end_time < now() ? $event->end_time : now());
+                    $maxEndTime = $event->end_time < now() ? $event->end_time : now();
+                    $submitTime = \Carbon\Carbon::createFromTimestamp(rand($event->start_time->timestamp, $maxEndTime->timestamp));
 
                     Submission::factory()->incorrect()->create([
                         'user_id' => $user->id,
@@ -235,7 +236,8 @@ class DummyDataSeeder extends Seeder
                 foreach ($solvedChallenges as $challenge) {
                     $user = $teamUsers->random(); // Random member submits
 
-                    $submitTime = fake()->dateTimeBetween($event->start_time, $event->end_time < now() ? $event->end_time : now());
+                    $maxEndTime = $event->end_time < now() ? $event->end_time : now();
+                    $submitTime = clone \Carbon\Carbon::createFromTimestamp(rand($event->start_time->timestamp, $maxEndTime->timestamp));
 
                     // 1-3 incorrect submissions before correct one
                     $incorrectCount = rand(0, 3);

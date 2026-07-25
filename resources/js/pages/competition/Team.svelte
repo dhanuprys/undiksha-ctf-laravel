@@ -84,7 +84,7 @@
             <!-- Team Overview Banner -->
             <Card class="overflow-hidden border-border/60 shadow-sm bg-card">
                 <div
-                    class="h-24 sm:h-32 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent relative"
+                    class="h-24 sm:h-32 bg-primary/10 relative"
                 >
                     <!-- Decorative pattern overlay -->
                     <div
@@ -180,7 +180,7 @@
                                         class="flex items-center gap-4 rounded-xl border border-border/60 bg-card p-4 hover:bg-muted/10 transition-colors shadow-sm group"
                                     >
                                         <div
-                                            class="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 font-bold text-primary shadow-sm text-lg"
+                                            class="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20 font-bold text-primary shadow-sm text-lg"
                                         >
                                             {member.name
                                                 .charAt(0)
@@ -413,7 +413,7 @@
         <!-- No Team State -->
         <div class="mx-auto max-w-xl mt-10">
             <div
-                class="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-card to-muted/20 shadow-sm transition-all duration-500 hover:shadow-md"
+                class="relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-all duration-500 hover:shadow-md"
             >
                 <!-- Removed decorative background elements for cleaner UX -->
 

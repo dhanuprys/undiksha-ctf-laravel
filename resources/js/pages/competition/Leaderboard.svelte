@@ -50,20 +50,20 @@
     let podiumEntries = $derived(leaderboard.slice(0, 3));
     let restEntries = $derived(leaderboard.slice(3));
 
-    function getRankBg(rank: number | string) {
+    function getRankStyle(rank: number | string) {
         if (rank === 1) {
-            return 'bg-yellow-500/10 border-yellow-500/30';
+            return 'border-yellow-500/50 bg-yellow-500/5';
         }
 
         if (rank === 2) {
-            return 'bg-slate-300/10 border-slate-400/30';
+            return 'border-slate-400/50 bg-slate-400/5';
         }
 
         if (rank === 3) {
-            return 'bg-amber-700/10 border-amber-700/30';
+            return 'border-amber-700/50 bg-amber-700/5';
         }
 
-        return 'bg-muted/10 border-border/60';
+        return 'border-border/60 bg-muted/5';
     }
 
     function getRankLabel(rank: number | string) {
@@ -108,90 +108,43 @@
             </div>
         </div>
     {:else}
-        <!-- Podium Section (Top 3) -->
+        <!-- Top 3 Section -->
         {#if podiumEntries.length > 0}
-            <div
-                class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
-                style="grid-template-areas: 'second first third';"
-            >
-                <!-- Render in visual order: 2nd, 1st, 3rd -->
-                {#each [podiumEntries[1], podiumEntries[0], podiumEntries[2]] as entry, i (i)}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {#each podiumEntries as entry, i (i)}
                     {#if entry}
-                        {@const isFirst = i === 1}
                         <div
-                            class="order-{i} sm:order-none"
-                            style="grid-area: {['second', 'first', 'third'][
-                                i
-                            ]};"
+                            class={`flex flex-col items-center p-6 rounded-2xl border transition-colors ${getRankStyle(entry.rank)} ${entry.is_current_team ? 'ring-2 ring-primary/50' : ''}`}
                         >
-                            <Card
-                                class={`relative overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md ${getRankBg(entry.rank)} ${entry.is_current_team ? 'ring-2 ring-primary/50' : ''} ${isFirst ? 'sm:-mt-4' : 'sm:mt-4'}`}
-                            >
-                                <CardContent
-                                    class="p-5 flex flex-col items-center text-center"
-                                >
-                                    <!-- Rank emoji -->
-                                    <div
-                                        class={`text-3xl mb-2 ${isFirst ? 'text-4xl' : ''}`}
-                                    >
-                                        {getRankLabel(entry.rank)}
-                                    </div>
+                            <div class="text-4xl mb-3">{getRankLabel(entry.rank)}</div>
+                            <h3 class={`font-bold text-xl text-center truncate w-full mb-1 ${entry.is_current_team ? 'text-primary' : 'text-foreground'}`}>
+                                {entry.team.name}
+                            </h3>
+                            
+                            {#if entry.is_current_team}
+                                <span class="mb-3 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                                    Tim Anda
+                                </span>
+                            {:else}
+                                <div class="h-6 mb-3"></div> <!-- Spacer to keep heights aligned -->
+                            {/if}
 
-                                    <!-- Team initial -->
-                                    <div
-                                        class={`shrink-0 rounded-full flex items-center justify-center font-black text-primary border-2 border-primary/20 bg-primary/10 mb-3 ${isFirst ? 'h-16 w-16 text-2xl' : 'h-12 w-12 text-lg'}`}
-                                    >
-                                        {entry.team.name
-                                            .charAt(0)
-                                            .toUpperCase()}
-                                    </div>
+                            <div class="text-4xl font-black text-foreground mt-2">
+                                {entry.total_score} <span class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">pts</span>
+                            </div>
 
-                                    <!-- Team name -->
-                                    <h3
-                                        class={`font-bold tracking-tight truncate max-w-full ${isFirst ? 'text-lg' : 'text-base'} ${entry.is_current_team ? 'text-primary' : 'text-foreground'}`}
-                                    >
-                                        {entry.team.name}
-                                    </h3>
-                                    {#if entry.is_current_team}
-                                        <span
-                                            class="mt-1 inline-flex items-center rounded-full bg-primary/20 px-2 py-0.5 text-[10px] uppercase font-bold text-primary tracking-wider border border-primary/30"
-                                        >
-                                            Tim Anda
-                                        </span>
-                                    {/if}
-
-                                    <!-- Score -->
-                                    <div
-                                        class={`mt-3 font-black text-primary ${isFirst ? 'text-3xl' : 'text-2xl'}`}
-                                    >
-                                        {entry.total_score}
-                                        <span
-                                            class="text-xs font-semibold uppercase tracking-wider opacity-70"
-                                            >pts</span
-                                        >
-                                    </div>
-
-                                    <!-- Meta -->
-                                    <div
-                                        class="flex items-center gap-3 mt-3 text-xs text-muted-foreground"
-                                    >
-                                        <span class="flex items-center gap-1">
-                                            <Trophy class="h-3 w-3" />
-                                            {entry.solved_count} soal
-                                        </span>
-                                        {#if entry.last_solve_time}
-                                            <span
-                                                class="flex items-center gap-1"
-                                            >
-                                                <Clock class="h-3 w-3" />
-                                                {formatTime(
-                                                    entry.last_solve_time,
-                                                )}
-                                            </span>
-                                        {/if}
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <div class="flex items-center justify-center gap-4 mt-5 text-sm text-muted-foreground w-full border-t border-border/50 pt-4">
+                                <span class="flex items-center gap-1.5">
+                                    <Trophy class="h-4 w-4" />
+                                    {entry.solved_count} soal
+                                </span>
+                                {#if entry.last_solve_time}
+                                    <span class="flex items-center gap-1.5">
+                                        <Clock class="h-4 w-4" />
+                                        {formatTime(entry.last_solve_time)}
+                                    </span>
+                                {/if}
+                            </div>
                         </div>
                     {/if}
                 {/each}

@@ -78,17 +78,17 @@
         class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"
     >
         <div class="space-y-1">
-            <h1 class="text-4xl font-extrabold tracking-tight text-foreground">
+            <h1 class="text-3xl font-bold tracking-tight text-foreground">
                 Selamat Datang, {page.props.auth.user.name}!
             </h1>
             {#if activeEvent}
-                <div class="flex items-center gap-2 mt-2">
-                    <span class="relative flex h-3 w-3">
+                <div class="flex items-center gap-2 mt-1.5">
+                    <span class="relative flex h-2.5 w-2.5">
                         <span
-                            class="relative inline-flex rounded-full h-3 w-3 bg-green-500"
+                            class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"
                         ></span>
                     </span>
-                    <p class="text-muted-foreground text-lg">
+                    <p class="text-muted-foreground text-sm font-medium">
                         Kompetisi Aktif: <span
                             class="font-semibold text-foreground"
                             >{activeEvent.name} ({activeEvent.year})</span
@@ -101,7 +101,7 @@
             <div class="flex flex-wrap gap-3">
                 <Button
                     variant="outline"
-                    class="gap-2 h-11 px-6 rounded-full border-border/60 shadow-sm hover:bg-muted/50 transition-colors"
+                    class="gap-2 h-10 px-5 rounded-full border-border/60 shadow-sm hover:bg-muted/50 transition-colors text-sm font-semibold"
                     asChild
                 >
                     {#snippet children(props)}
@@ -113,7 +113,7 @@
                 </Button>
                 <Button
                     variant="default"
-                    class="gap-2 h-11 px-6 rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
+                    class="gap-2 h-10 px-5 rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-semibold"
                     asChild
                 >
                     {#snippet children(props)}
@@ -139,7 +139,7 @@
             <h3 class="mb-2 text-2xl font-bold tracking-tight">
                 Tidak Ada Kompetisi Aktif
             </h3>
-            <p class="text-muted-foreground max-w-md text-base">
+            <p class="text-muted-foreground max-w-md text-sm">
                 Saat ini tidak ada kompetisi CTF yang sedang berlangsung.
                 Silakan kembali lagi nanti.
             </p>
@@ -147,23 +147,21 @@
     {:else if !currentTeam}
         <!-- Empty State / No Team Hero -->
         <div
-            class="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-card to-muted/20 shadow-sm transition-all duration-500 hover:shadow-md"
+            class="relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-all duration-500 hover:shadow-md"
         >
-            <!-- Removed decorative background elements for cleaner UX -->
-
             <div
-                class="px-6 py-16 sm:p-16 flex flex-col items-center text-center relative z-10"
+                class="px-6 py-12 sm:p-16 flex flex-col items-center text-center relative z-10"
             >
                 <div
-                    class="h-20 w-20 bg-background shadow-sm border border-border/60 rounded-2xl flex items-center justify-center mb-8 rotate-3 transition-transform hover:rotate-6"
+                    class="h-16 w-16 bg-background shadow-sm border border-border/60 rounded-2xl flex items-center justify-center mb-6 rotate-3 transition-transform hover:rotate-6"
                 >
-                    <Flag class="h-10 w-10 text-primary" />
+                    <Flag class="h-8 w-8 text-primary" />
                 </div>
-                <h2 class="text-4xl font-extrabold tracking-tight mb-4">
+                <h2 class="text-3xl font-bold tracking-tight mb-3">
                     Siap Untuk Berkompetisi?
                 </h2>
                 <p
-                    class="text-lg text-muted-foreground max-w-2xl mb-10 leading-relaxed"
+                    class="text-base text-muted-foreground max-w-xl mb-8 leading-relaxed"
                 >
                     Anda harus bergabung atau membuat tim terlebih dahulu
                     sebelum dapat mengikuti kompetisi, melihat tantangan, atau
@@ -171,14 +169,14 @@
                 </p>
                 <Button
                     size="lg"
-                    class="gap-2 text-base px-8 h-12 rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
+                    class="gap-2 text-sm px-6 h-11 rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 font-semibold"
                     asChild
                 >
                     {#snippet children(props)}
                         <Link href={showTeamRoute().url} {...props}>
-                            <Shield class="h-5 w-5" />
+                            <Shield class="h-4 w-4" />
                             Kelola Tim Saya
-                            <ArrowRight class="h-5 w-5 ml-1" />
+                            <ArrowRight class="h-4 w-4 ml-1" />
                         </Link>
                     {/snippet}
                 </Button>
@@ -192,18 +190,18 @@
             >
                 <CardHeader class="pb-2">
                     <CardTitle
-                        class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+                        class="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground/80 uppercase"
                     >
-                        <Trophy class="h-4 w-4 text-amber-500" />
+                        <Trophy class="h-3.5 w-3.5 text-amber-500" />
                         Total Poin
                     </CardTitle>
                 </CardHeader>
                 <CardContent class="pb-6">
                     <div class="flex items-baseline gap-1.5">
-                        <h3 class="text-4xl font-black tracking-tight">
+                        <h3 class="text-5xl font-black tracking-tight text-foreground">
                             {stats.total_points}
                         </h3>
-                        <span class="text-base font-bold text-muted-foreground"
+                        <span class="text-sm font-semibold text-muted-foreground"
                             >pts</span
                         >
                     </div>
@@ -215,9 +213,9 @@
             >
                 <CardHeader class="pb-2">
                     <CardTitle
-                        class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+                        class="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground/80 uppercase"
                     >
-                        <Hash class="h-4 w-4 text-blue-500" />
+                        <Hash class="h-3.5 w-3.5 text-blue-500" />
                         Peringkat Tim
                     </CardTitle>
                 </CardHeader>
@@ -227,7 +225,7 @@
                             class="text-2xl font-bold text-muted-foreground/50"
                             >#</span
                         >
-                        <h3 class="text-4xl font-black tracking-tight">
+                        <h3 class="text-5xl font-black tracking-tight text-foreground">
                             {stats.rank}
                         </h3>
                     </div>
@@ -239,31 +237,31 @@
             >
                 <CardHeader class="pb-2">
                     <CardTitle
-                        class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+                        class="flex items-center gap-1.5 text-xs font-bold tracking-wider text-muted-foreground/80 uppercase"
                     >
-                        <Target class="h-4 w-4 text-green-500" />
+                        <Target class="h-3.5 w-3.5 text-green-500" />
                         Tantangan
                     </CardTitle>
                 </CardHeader>
                 <CardContent class="pb-6">
                     <div class="flex items-end justify-between mb-3 mt-1">
                         <div class="flex items-baseline gap-1.5">
-                            <h3 class="text-4xl font-black tracking-tight">
+                            <h3 class="text-4xl font-black tracking-tight text-foreground">
                                 {stats.solved_count}
                             </h3>
                             <span
-                                class="text-base font-bold text-muted-foreground"
+                                class="text-sm font-semibold text-muted-foreground"
                                 >/ {stats.total_challenges}</span
                             >
                         </div>
                         <span
-                            class="text-xs font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-1 rounded-md"
+                            class="text-xs font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20"
                             >{progressPercentage}%</span
                         >
                     </div>
                     <Progress
                         value={progressPercentage}
-                        class="h-2 w-full bg-muted/50"
+                        class="h-1.5 w-full bg-muted"
                     />
                 </CardContent>
             </Card>
@@ -274,66 +272,52 @@
             <!-- Left Column: Status & Info -->
             <div class="lg:col-span-2 flex flex-col gap-6">
                 <Card
-                    class="shadow-sm border-border/60 bg-card overflow-hidden"
+                    class="shadow-sm border-border/60 bg-card overflow-hidden flex flex-col h-full"
                 >
                     <CardHeader
-                        class="pb-4 pt-5 border-b border-border/40 bg-muted/5"
+                        class="pb-4 pt-5 border-b border-border/40 bg-muted/5 shrink-0"
                     >
-                        <CardTitle class="flex items-center gap-2 text-xl">
+                        <CardTitle class="flex items-center gap-2 text-xl font-bold text-foreground">
                             <Calendar class="h-5 w-5 text-primary" />
-                            Garis Waktu Kompetisi
+                            Jadwal Kompetisi
                         </CardTitle>
                     </CardHeader>
-                    <CardContent class="pt-6">
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <div
-                                class="rounded-xl bg-muted/20 p-6 border border-border/40 relative overflow-hidden group hover:border-primary/40 transition-colors"
-                            >
-                                <div
-                                    class="text-xs font-bold text-muted-foreground tracking-widest mb-3 uppercase flex items-center gap-2"
-                                >
-                                    <div
-                                        class="h-2 w-2 rounded-full bg-blue-500"
-                                    ></div>
-                                    Waktu Mulai
+                    <CardContent class="p-6 flex-1 flex flex-col justify-center">
+                        <div class="grid gap-6 sm:grid-cols-2 relative">
+                            <div class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors">
+                                <div class="flex items-center gap-4 mb-5">
+                                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
+                                        <Play class="h-5 w-5 ml-0.5" />
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[10px] font-extrabold text-muted-foreground/80 uppercase tracking-widest mb-0.5">Waktu Dimulai</p>
+                                        <p class="text-sm font-semibold text-foreground truncate">{formatDateTime(activeEvent.start_time)}</p>
+                                    </div>
                                 </div>
-                                <p
-                                    class="text-xl font-semibold mb-4 text-foreground"
-                                >
-                                    {formatDateTime(activeEvent.start_time)}
-                                </p>
-                                <div
-                                    class="bg-background/80 rounded-lg p-3 border border-border/50 shadow-sm"
-                                >
+                                <div class="bg-background rounded-xl p-3 border border-border/40 shadow-sm">
                                     <CountdownTimer
                                         targetDate={activeEvent.start_time}
-                                        label="Mulai dalam"
+                                        label="Dimulai Dalam"
+                                        expiredText="Telah Dimulai"
                                     />
                                 </div>
                             </div>
 
-                            <div
-                                class="rounded-xl bg-muted/20 p-6 border border-border/40 relative overflow-hidden group hover:border-red-500/40 transition-colors"
-                            >
-                                <div
-                                    class="text-xs font-bold text-muted-foreground tracking-widest mb-3 uppercase flex items-center gap-2"
-                                >
-                                    <div
-                                        class="h-2 w-2 rounded-full bg-red-500"
-                                    ></div>
-                                    Batas Waktu
+                            <div class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors">
+                                <div class="flex items-center gap-4 mb-5">
+                                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
+                                        <Target class="h-5 w-5" />
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[10px] font-extrabold text-muted-foreground/80 uppercase tracking-widest mb-0.5">Waktu Berakhir</p>
+                                        <p class="text-sm font-semibold text-foreground truncate">{formatDateTime(activeEvent.end_time)}</p>
+                                    </div>
                                 </div>
-                                <p
-                                    class="text-xl font-semibold mb-4 text-foreground"
-                                >
-                                    {formatDateTime(activeEvent.end_time)}
-                                </p>
-                                <div
-                                    class="bg-background/80 rounded-lg p-3 border border-border/50 shadow-sm"
-                                >
+                                <div class="bg-background rounded-xl p-3 border border-border/40 shadow-sm">
                                     <CountdownTimer
                                         targetDate={activeEvent.end_time}
-                                        label="Sisa waktu"
+                                        label="Sisa Waktu"
+                                        expiredText="Telah Berakhir"
                                     />
                                 </div>
                             </div>
@@ -351,12 +335,12 @@
                         class="pb-4 border-b border-border/40 bg-muted/5"
                     >
                         <div class="flex items-center justify-between">
-                            <CardTitle class="flex items-center gap-2 text-lg">
+                            <CardTitle class="flex items-center gap-2 text-lg font-bold text-foreground">
                                 <Activity class="h-5 w-5 text-primary" />
                                 Aktivitas Terakhir
                             </CardTitle>
                             <span
-                                class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-md"
+                                class="bg-primary/10 text-primary text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded border border-primary/20"
                             >
                                 Top {recentSubmissions.length}
                             </span>

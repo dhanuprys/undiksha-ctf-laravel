@@ -6,9 +6,11 @@
     let {
         targetDate,
         label = '',
+        expiredText = 'Selesai',
     }: {
         targetDate: string | null;
         label?: string;
+        expiredText?: string;
     } = $props();
 
     let timeRemaining = $state('');
@@ -31,7 +33,7 @@
         const difference = target - now;
 
         if (difference < 0) {
-            timeRemaining = 'Selesai';
+            timeRemaining = expiredText;
             clearInterval(interval);
 
             return;

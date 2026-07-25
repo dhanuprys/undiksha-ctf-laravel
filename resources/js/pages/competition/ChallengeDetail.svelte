@@ -70,9 +70,9 @@
             <Card
                 class={`relative overflow-hidden border-border/60 shadow-sm transition-all duration-500 ${challenge.solved_by_team ? 'ring-1 ring-green-500/50 shadow-green-500/10' : 'hover:shadow-md'}`}
             >
-                <!-- Decorative Top Gradient -->
+                <!-- Decorative Top Border -->
                 <div
-                    class={`absolute top-0 left-0 right-0 h-1.5 w-full ${challenge.solved_by_team ? 'bg-gradient-to-r from-green-400 to-emerald-600' : 'bg-gradient-to-r from-primary/60 to-primary/40'}`}
+                    class={`absolute top-0 left-0 right-0 h-1.5 w-full ${challenge.solved_by_team ? 'bg-green-500' : 'bg-primary'}`}
                 ></div>
 
                 <CardHeader
@@ -199,7 +199,7 @@
         <div class="lg:col-span-1">
             <div class="sticky top-24">
                 <Card
-                    class={`border-border/60 shadow-sm overflow-hidden transition-all duration-500 ${challenge.solved_by_team ? 'bg-gradient-to-b from-green-500/10 to-emerald-500/5 border-green-500/30' : 'bg-card hover:shadow-md'}`}
+                    class={`border-border/60 shadow-sm overflow-hidden transition-all duration-500 ${challenge.solved_by_team ? 'bg-green-500/10 border-green-500/30' : 'bg-card hover:shadow-md'}`}
                 >
                     <CardHeader
                         class={`pb-4 ${challenge.solved_by_team ? '' : 'border-b border-border/40 bg-muted/5'}`}

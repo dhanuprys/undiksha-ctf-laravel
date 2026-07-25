@@ -38,6 +38,8 @@ RUN apk add --no-cache \
 # Builder stage for both Composer and NPM (PHP is required for Wayfinder)
 FROM base AS builder
 
+ENV VITE_APP_NAME="Ganesha CTF Platform"
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN apk add --no-cache nodejs npm
 

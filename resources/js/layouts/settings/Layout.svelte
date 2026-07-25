@@ -35,10 +35,7 @@
 </script>
 
 <div class="px-4 py-6">
-    <Heading
-        title="Pengaturan"
-        description="Atur preferensi untuk akun Anda"
-    />
+    <Heading title="Pengaturan" description="Atur preferensi untuk akun Anda" />
 
     <div class="flex flex-col lg:flex-row lg:space-x-12">
         <aside class="w-full max-w-xl lg:w-48">

@@ -1,7 +1,8 @@
 <script module lang="ts">
     export const layout = {
         title: 'Lupa kata sandi',
-        description: 'Masukkan email Anda untuk menerima tautan atur ulang kata sandi',
+        description:
+            'Masukkan email Anda untuk menerima tautan atur ulang kata sandi',
     };
 </script>
 

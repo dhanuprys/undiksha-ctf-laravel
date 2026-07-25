@@ -26,7 +26,8 @@
 
 {#if status === 'verification-link-sent'}
     <div class="mb-4 text-center text-sm font-medium text-green-600">
-        Tautan verifikasi baru telah dikirimkan ke alamat email yang Anda berikan saat pendaftaran.
+        Tautan verifikasi baru telah dikirimkan ke alamat email yang Anda
+        berikan saat pendaftaran.
     </div>
 {/if}
 

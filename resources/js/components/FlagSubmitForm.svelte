@@ -7,10 +7,11 @@
     import { Spinner } from '@/components/ui/spinner';
     import { store as submitFlagRoute } from '@/routes/submissions';
 
-    let { challengeId, disabled = false }: { challengeId: number; disabled?: boolean } = $props();
+    let props: { challengeId: number; disabled?: boolean } = $props();
 
+    // svelte-ignore state_referenced_locally
     const form = useForm({
-        challenge_id: challengeId,
+        challenge_id: props.challengeId,
         flag: '',
     });
 
@@ -24,21 +25,28 @@
     }
 </script>
 
-<form onsubmit={(e) => {
- e.preventDefault(); submitFlag(); 
-}} class="flex flex-col gap-4 mt-4">
+<form
+    onsubmit={(e) => {
+        e.preventDefault();
+        submitFlag();
+    }}
+    class="flex flex-col gap-4 mt-4"
+>
     <div class="grid gap-2">
-        <Label for={`flag-${challengeId}`}>Kirim Flag</Label>
+        <Label for={`flag-${props.challengeId}`}>Kirim Flag</Label>
         <div class="flex flex-col sm:flex-row gap-2">
             <Input
-                id={`flag-${challengeId}`}
+                id={`flag-${props.challengeId}`}
                 type="text"
                 placeholder={'ganeshactf{...}'}
                 bind:value={form.flag}
-                {disabled}
+                disabled={props.disabled}
                 class="flex-1 font-mono"
             />
-            <Button type="submit" disabled={form.processing || disabled || !form.flag}>
+            <Button
+                type="submit"
+                disabled={form.processing || props.disabled || !form.flag}
+            >
                 {#if form.processing}<Spinner class="mr-2 h-4 w-4" />{/if}
                 Submit
             </Button>

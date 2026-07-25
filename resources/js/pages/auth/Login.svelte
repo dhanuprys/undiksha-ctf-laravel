@@ -1,7 +1,8 @@
 <script module lang="ts">
     export const layout = {
         title: 'Masuk ke akun Anda',
-        description: 'Masukkan email dan kata sandi Anda di bawah ini untuk masuk',
+        description:
+            'Masukkan email dan kata sandi Anda di bawah ini untuk masuk',
     };
 </script>
 
@@ -95,6 +96,5 @@
                 Masuk
             </Button>
         </div>
-
     {/snippet}
 </Form>

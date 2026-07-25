@@ -50,7 +50,11 @@
                                 >Apakah Anda yakin ingin menghapus akun Anda?</DialogTitle
                             >
                             <DialogDescription>
-                                Setelah akun Anda dihapus, semua sumber daya dan data di dalamnya juga akan dihapus secara permanen. Silakan masukkan kata sandi Anda untuk mengonfirmasi bahwa Anda ingin menghapus akun Anda secara permanen.
+                                Setelah akun Anda dihapus, semua sumber daya dan
+                                data di dalamnya juga akan dihapus secara
+                                permanen. Silakan masukkan kata sandi Anda untuk
+                                mengonfirmasi bahwa Anda ingin menghapus akun
+                                Anda secara permanen.
                             </DialogDescription>
                         </div>
 

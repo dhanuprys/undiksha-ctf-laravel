@@ -32,23 +32,27 @@
         }
 
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const hours = Math.floor(
+            (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+        const minutes = Math.floor(
+            (difference % (1000 * 60 * 60)) / (1000 * 60),
+        );
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
         let formatted = '';
 
         if (days > 0) {
-formatted += `${days}h `;
-}
+            formatted += `${days}h `;
+        }
 
         if (hours > 0 || days > 0) {
-formatted += `${hours}j `;
-}
+            formatted += `${hours}j `;
+        }
 
         if (minutes > 0 || hours > 0 || days > 0) {
-formatted += `${minutes}m `;
-}
+            formatted += `${minutes}m `;
+        }
 
         formatted += `${seconds}d`;
 
@@ -58,15 +62,18 @@ formatted += `${minutes}m `;
     onMount(() => {
         calculateTimeRemaining();
 
-        if (targetDate && new Date(targetDate).getTime() > new Date().getTime()) {
+        if (
+            targetDate &&
+            new Date(targetDate).getTime() > new Date().getTime()
+        ) {
             interval = setInterval(calculateTimeRemaining, 1000);
         }
     });
 
     onDestroy(() => {
         if (interval) {
-clearInterval(interval);
-}
+            clearInterval(interval);
+        }
     });
 </script>
 

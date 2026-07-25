@@ -35,6 +35,7 @@ export type Challenge = {
     category?: Category;
     solved_by_team?: boolean;
     solve_count?: number | null;
+    points_awarded?: number | null;
     attachments?: Attachment[];
 };
 

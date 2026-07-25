@@ -66,8 +66,8 @@
             <div class="flex flex-col items-start justify-start space-y-4">
                 <p class="text-muted-foreground text-sm">
                     Anda akan diminta memasukkan PIN acak yang aman saat masuk,
-                    yang dapat Anda peroleh dari aplikasi yang mendukung TOTP
-                    di ponsel Anda.
+                    yang dapat Anda peroleh dari aplikasi yang mendukung TOTP di
+                    ponsel Anda.
                 </p>
 
                 <div class="relative inline">

@@ -6,14 +6,14 @@
     import type { LeaderboardGraphData } from '@/types/ctf';
 
     let { graphData }: { graphData: LeaderboardGraphData[] } = $props();
-    
+
     let canvas: HTMLCanvasElement;
     let chart: Chart | null = null;
 
     $effect(() => {
         if (chart && graphData) {
             const rawData = $state.snapshot(graphData);
-            chart.data.datasets = rawData.map(team => ({
+            chart.data.datasets = rawData.map((team) => ({
                 label: team.team_name,
                 data: team.data as any[],
                 borderColor: team.color,
@@ -33,12 +33,12 @@
         if (!canvas) {
             return;
         }
-        
+
         const rawData = $state.snapshot(graphData);
         chart = new Chart(canvas, {
             type: 'line',
             data: {
-                datasets: rawData.map(team => ({
+                datasets: rawData.map((team) => ({
                     label: team.team_name,
                     data: team.data as any[],
                     borderColor: team.color,
@@ -49,7 +49,7 @@
                     pointHitRadius: 10,
                     stepped: true,
                     tension: 0,
-                }))
+                })),
             },
             options: {
                 responsive: true,
@@ -76,11 +76,11 @@
                             boxWidth: 8,
                             padding: 20,
                             font: {
-                                family: "Inter, ui-sans-serif, system-ui, sans-serif",
-                                size: 12
-                            }
-                        }
-                    }
+                                family: 'Inter, ui-sans-serif, system-ui, sans-serif',
+                                size: 12,
+                            },
+                        },
+                    },
                 },
                 scales: {
                     x: {
@@ -89,13 +89,13 @@
                             tooltipFormat: 'PPpp',
                             displayFormats: {
                                 hour: 'HH:mm',
-                                day: 'd MMM'
-                            }
+                                day: 'd MMM',
+                            },
                         },
                         adapters: {
                             date: {
                                 locale: id,
-                            }
+                            },
                         },
                         title: {
                             display: false,
@@ -104,27 +104,33 @@
                             display: false, // Cleaner without vertical lines
                         },
                         ticks: {
-                            font: { family: "Inter, ui-sans-serif, system-ui, sans-serif" }
-                        }
+                            font: {
+                                family: 'Inter, ui-sans-serif, system-ui, sans-serif',
+                            },
+                        },
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
                             text: 'Total Poin',
-                            font: { family: "Inter, ui-sans-serif, system-ui, sans-serif" }
+                            font: {
+                                family: 'Inter, ui-sans-serif, system-ui, sans-serif',
+                            },
                         },
                         grid: {
                             color: 'rgba(156, 163, 175, 0.15)',
                         },
                         border: { display: false },
                         ticks: {
-                            font: { family: "Inter, ui-sans-serif, system-ui, sans-serif" },
-                            padding: 10
-                        }
-                    }
-                }
-            }
+                            font: {
+                                family: 'Inter, ui-sans-serif, system-ui, sans-serif',
+                            },
+                            padding: 10,
+                        },
+                    },
+                },
+            },
         });
     });
 

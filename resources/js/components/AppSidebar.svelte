@@ -21,7 +21,6 @@
     import { dashboard } from '@/routes';
     import type { NavItem } from '@/types';
 
-
     let {
         children,
     }: {
@@ -56,15 +55,15 @@
     <SidebarHeader>
         <SidebarMenu>
             <SidebarMenuItem>
-                    {#snippet children(props)}
-                        <Link
-                            {...props}
-                            href={toUrl(dashboard())}
-                            class={props.class}
-                        >
-                            <AppLogo />
-                        </Link>
-                    {/snippet}
+                {#snippet children(props)}
+                    <Link
+                        {...props}
+                        href={toUrl(dashboard())}
+                        class={props.class}
+                    >
+                        <AppLogo />
+                    </Link>
+                {/snippet}
             </SidebarMenuItem>
         </SidebarMenu>
     </SidebarHeader>

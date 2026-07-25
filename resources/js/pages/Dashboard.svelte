@@ -268,11 +268,11 @@
         </div>
 
         <!-- Split Content Area -->
-        <div class="grid gap-6 lg:grid-cols-3">
+        <div class="grid gap-6 lg:grid-cols-3 items-start">
             <!-- Left Column: Status & Info -->
             <div class="lg:col-span-2 flex flex-col gap-6">
                 <Card
-                    class="shadow-sm border-border/60 bg-card overflow-hidden flex flex-col h-full"
+                    class="shadow-sm border-border/60 bg-card overflow-hidden flex flex-col"
                 >
                     <CardHeader
                         class="pb-4 pt-5 border-b border-border/40 bg-muted/5 shrink-0"
@@ -282,7 +282,7 @@
                             Jadwal Kompetisi
                         </CardTitle>
                     </CardHeader>
-                    <CardContent class="p-6 flex-1 flex flex-col justify-center">
+                    <CardContent class="p-6">
                         <div class="grid gap-6 sm:grid-cols-2 relative">
                             <div class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors">
                                 <div class="flex items-center gap-4 mb-5">

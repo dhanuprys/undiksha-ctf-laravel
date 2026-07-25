@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Challenge;
 use App\Models\ChallengeAttachment;
 use App\Models\Event;
+use App\Models\Setting;
 use App\Models\Submission;
 use App\Models\Team;
 use App\Models\User;
@@ -92,12 +93,12 @@ class DummyDataSeeder extends Seeder
 
         // Seed basic settings for each event
         foreach ($events->push($upcomingEvent) as $evt) {
-            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'degradation_rate'], ['value' => '0.10']);
-            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'penalty_deduction'], ['value' => '0.05']);
-            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'max_team_size'], ['value' => '3']);
-            \App\Models\Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'show_solver_count'], ['value' => '1']);
+            Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'degradation_rate'], ['value' => '0.10']);
+            Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'penalty_deduction'], ['value' => '0.05']);
+            Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'max_team_size'], ['value' => '3']);
+            Setting::firstOrCreate(['event_id' => $evt->id, 'key' => 'show_solver_count'], ['value' => '1']);
         }
-        
+
         // Remove upcomingEvent from main processing loop array
         $events->pop();
 
@@ -126,16 +127,16 @@ class DummyDataSeeder extends Seeder
                 ['title' => 'Discord Welcome', 'desc' => 'Join our Discord server and read the #rules channel.', 'difficulty' => ChallengeLevel::Easy, 'score' => 100, 'flag' => 'CTF{welcome_to_undiksha_ctf}'],
                 ['title' => 'Regex Crossword', 'desc' => 'Solve the regular expression crossword puzzle to get the flag.', 'difficulty' => ChallengeLevel::Medium, 'score' => 250, 'flag' => 'CTF{regex_master_ninja}'],
                 ['title' => 'OSINT Twitter', 'desc' => 'Find the flag hidden in one of the tweets of the target user.', 'difficulty' => ChallengeLevel::Hard, 'score' => 500, 'flag' => 'CTF{osint_twitter_detective}'],
-            ]
+            ],
         ];
 
         foreach ($events as $event) {
             // Create Challenges for Event across all categories
             $challenges = collect();
-            
+
             foreach ($categories as $category) {
                 $catChallenges = $realChallenges[$category->name] ?? [];
-                
+
                 foreach ($catChallenges as $cData) {
                     $challenge = Challenge::create([
                         'event_id' => $event->id,
@@ -227,7 +228,7 @@ class DummyDataSeeder extends Seeder
                 $solvedChallenges = $challenges->random(rand(2, 6)); // Each team solves 2-6 challenges
 
                 // Track solve count per challenge to compute correct points
-                if (!isset($challengeSolveCount)) {
+                if (! isset($challengeSolveCount)) {
                     $challengeSolveCount = [];
                 }
 

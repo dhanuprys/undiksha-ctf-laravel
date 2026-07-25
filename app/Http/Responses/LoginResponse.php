@@ -4,6 +4,7 @@ namespace App\Http\Responses;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +19,7 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request)
     {
         if (Auth::user()->isAdmin()) {
-            return \Inertia\Inertia::location(url('/admin'));
+            return Inertia::location(url('/admin'));
         }
 
         return redirect()->intended(config('fortify.home', '/dashboard'));

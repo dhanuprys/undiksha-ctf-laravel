@@ -3,11 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Challenge;
-use App\Models\Event;
-use App\Models\Setting;
-use App\Models\Submission;
-use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 

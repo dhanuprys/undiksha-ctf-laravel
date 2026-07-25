@@ -72,7 +72,7 @@ class ChallengeController extends Controller
                 $query->where('event_id', $activeEvent->id)
                     ->where('is_active', true)
                     ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty');
-                
+
                 if ($showSolverCount) {
                     $query->withCount(['submissions as solve_count' => function ($q) {
                         $q->where('is_correct', true);

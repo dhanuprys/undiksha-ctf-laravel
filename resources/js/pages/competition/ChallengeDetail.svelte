@@ -263,7 +263,7 @@
                                     <p class="text-xs">
                                         Format: <code
                                             class="px-1.5 py-0.5 rounded bg-background border border-border/60 font-mono text-foreground font-semibold"
-                                            >ganeshactf&#123;...&#125;</code
+                                            >CTF&#123;...&#125;</code
                                         >
                                     </p>
                                 </div>

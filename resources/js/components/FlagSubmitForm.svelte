@@ -38,7 +38,7 @@
             <Input
                 id={`flag-${props.challengeId}`}
                 type="text"
-                placeholder={'ganeshactf{...}'}
+                placeholder={'CTF{...}'}
                 bind:value={form.flag}
                 disabled={props.disabled}
                 class="flex-1 font-mono"

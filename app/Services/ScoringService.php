@@ -61,7 +61,7 @@ class ScoringService
                 'is_correct' => $isCorrect,
                 'points_awarded' => $points,
             ]);
-        });
+        }, 3);
     }
 
     /**

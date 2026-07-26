@@ -26,6 +26,8 @@
         Play,
         Zap,
         CheckCircle2,
+        XCircle,
+        User,
     } from 'lucide-svelte';
     import AppHead from '@/components/AppHead.svelte';
     import CountdownTimer from '@/components/CountdownTimer.svelte';
@@ -357,11 +359,19 @@
                                     <div
                                         class="p-4 group hover:bg-muted/30 transition-colors flex gap-4 items-start relative z-10"
                                     >
-                                        <div
-                                            class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-500 shadow-sm bg-card"
-                                        >
-                                            <CheckCircle2 class="h-4 w-4" />
-                                        </div>
+                                        {#if submission.is_correct}
+                                            <div
+                                                class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-500 shadow-sm bg-card"
+                                            >
+                                                <CheckCircle2 class="h-4 w-4" />
+                                            </div>
+                                        {:else}
+                                            <div
+                                                class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-500 shadow-sm bg-card"
+                                            >
+                                                <XCircle class="h-4 w-4" />
+                                            </div>
+                                        {/if}
                                         <div
                                             class="flex-1 min-w-0 bg-background/50 p-2 -my-2 rounded-md transition-colors group-hover:bg-transparent"
                                         >
@@ -374,11 +384,19 @@
                                                     {submission.challenge
                                                         ?.title}
                                                 </h4>
-                                                <span
-                                                    class="shrink-0 inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-500/10 rounded border border-green-500/20 whitespace-nowrap"
-                                                >
-                                                    +{submission.points_awarded} pts
-                                                </span>
+                                                {#if submission.is_correct}
+                                                    <span
+                                                        class="shrink-0 inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-500/10 rounded border border-green-500/20 whitespace-nowrap"
+                                                    >
+                                                        +{submission.points_awarded ?? 0} pts
+                                                    </span>
+                                                {:else}
+                                                    <span
+                                                        class="shrink-0 inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400 bg-red-500/10 rounded border border-red-500/20 whitespace-nowrap"
+                                                    >
+                                                        {submission.points_awarded ?? 0} pts
+                                                    </span>
+                                                {/if}
                                             </div>
                                             <div
                                                 class="flex items-center justify-between text-xs text-muted-foreground mt-1.5"
@@ -394,14 +412,23 @@
                                                         'Umum'}
                                                 </span>
                                                 <div
-                                                    class="flex items-center gap-1.5"
+                                                    class="flex items-center gap-2"
                                                 >
-                                                    <Clock class="h-3 w-3" />
-                                                    <span
-                                                        >{formatTime(
-                                                            submission.created_at,
-                                                        )}</span
+                                                    <div class="flex items-center gap-1.5">
+                                                        <User class="h-3 w-3" />
+                                                        <span class="truncate max-w-[100px]" title={submission.user?.name ?? 'Sistem'}>{submission.user?.name ?? 'Sistem'}</span>
+                                                    </div>
+                                                    <div class="h-1.5 w-1.5 rounded-full bg-muted-foreground/30"></div>
+                                                    <div
+                                                        class="flex items-center gap-1.5"
                                                     >
+                                                        <Clock class="h-3 w-3" />
+                                                        <span
+                                                            >{formatTime(
+                                                                submission.created_at,
+                                                            )}</span
+                                                        >
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

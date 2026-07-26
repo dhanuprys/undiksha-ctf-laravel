@@ -18,6 +18,8 @@
         Star,
         Copy,
         ArrowRight,
+        XCircle,
+        User,
     } from 'lucide-svelte';
     import AppHead from '@/components/AppHead.svelte';
     import InputError from '@/components/InputError.svelte';
@@ -38,9 +40,11 @@
 
     let {
         team,
+        submissions,
         maxTeamSize = 5,
     }: {
-        team: Team | null;
+        team: (Team & { correct_submissions_count?: number }) | null;
+        submissions?: any;
         maxTeamSize: number;
     } = $props();
 
@@ -140,11 +144,7 @@
                                 Diselesaikan
                             </div>
                             <div class="text-3xl font-black text-foreground">
-                                {team.submissions
-                                    ? team.submissions.filter(
-                                          (s) => s.is_correct,
-                                      ).length
-                                    : 0}
+                                {team.correct_submissions_count ?? 0}
                             </div>
                         </div>
                     </div>
@@ -311,22 +311,30 @@
                         </CardTitle>
                     </CardHeader>
                     <CardContent class="p-0">
-                        {#if team.submissions && team.submissions.length > 0}
+                        {#if submissions?.data && submissions.data.length > 0}
                             <div class="divide-y divide-border/40 relative">
                                 <!-- Vertical timeline line -->
                                 <div
                                     class="absolute left-[31px] top-6 bottom-6 w-px bg-border/60"
                                 ></div>
 
-                                {#each team.submissions as submission (submission.id)}
+                                {#each submissions.data as submission (submission.id)}
                                     <div
                                         class="p-5 group hover:bg-muted/30 transition-colors flex gap-4 items-start relative z-10"
                                     >
-                                        <div
-                                            class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-500 shadow-sm bg-card"
-                                        >
-                                            <CheckCircle2 class="h-4 w-4" />
-                                        </div>
+                                        {#if submission.is_correct}
+                                            <div
+                                                class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-500 shadow-sm bg-card"
+                                            >
+                                                <CheckCircle2 class="h-4 w-4" />
+                                            </div>
+                                        {:else}
+                                            <div
+                                                class="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-500 shadow-sm bg-card"
+                                            >
+                                                <XCircle class="h-4 w-4" />
+                                            </div>
+                                        {/if}
                                         <div
                                             class="flex-1 min-w-0 bg-background/50 p-2.5 -my-2.5 rounded-md transition-colors group-hover:bg-transparent"
                                         >
@@ -339,15 +347,22 @@
                                                     {submission.challenge
                                                         ?.title}
                                                 </h4>
-                                                <span
-                                                    class="shrink-0 inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-500/10 rounded border border-green-500/20 whitespace-nowrap"
-                                                >
-                                                    +{submission.points_awarded ??
-                                                        0} pts
-                                                </span>
+                                                {#if submission.is_correct}
+                                                    <span
+                                                        class="shrink-0 inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-500/10 rounded border border-green-500/20 whitespace-nowrap"
+                                                    >
+                                                        +{submission.points_awarded ?? 0} pts
+                                                    </span>
+                                                {:else}
+                                                    <span
+                                                        class="shrink-0 inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400 bg-red-500/10 rounded border border-red-500/20 whitespace-nowrap"
+                                                    >
+                                                        {submission.points_awarded ?? 0} pts
+                                                    </span>
+                                                {/if}
                                             </div>
                                             <div
-                                                class="flex items-center text-xs text-muted-foreground mt-2"
+                                                class="flex items-center text-xs text-muted-foreground mt-2 flex-wrap gap-3"
                                             >
                                                 <div
                                                     class="flex items-center gap-1.5"
@@ -361,11 +376,49 @@
                                                         )}</span
                                                     >
                                                 </div>
+                                                <div
+                                                    class="flex items-center gap-1.5"
+                                                >
+                                                    <User
+                                                        class="h-3.5 w-3.5"
+                                                    />
+                                                    <span class="font-medium"
+                                                        >{submission.user?.name ?? 'Sistem'}</span
+                                                    >
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 {/each}
                             </div>
+                            
+                            <!-- Pagination -->
+                            {#if submissions.links && submissions.links.length > 3}
+                                <div class="px-5 py-4 border-t border-border/40 flex items-center justify-between bg-muted/5">
+                                    <div class="text-sm text-muted-foreground">
+                                        Menampilkan <span class="font-medium text-foreground">{submissions.from}</span> - <span class="font-medium text-foreground">{submissions.to}</span> dari <span class="font-medium text-foreground">{submissions.total}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        {#each submissions.links as link (link)}
+                                            {#if link.url === null}
+                                                <div
+                                                    class="px-3 py-1.5 text-sm font-medium rounded-md border border-border/40 text-muted-foreground/50 bg-muted/30 cursor-not-allowed"
+                                                >
+                                                    {@html link.label}
+                                                </div>
+                                            {:else}
+                                                <Link
+                                                    href={link.url}
+                                                    preserveScroll
+                                                    class="px-3 py-1.5 text-sm font-medium rounded-md border {link.active ? 'border-primary bg-primary text-primary-foreground' : 'border-border/60 hover:bg-muted/50 text-foreground transition-colors'}"
+                                                >
+                                                    {@html link.label}
+                                                </Link>
+                                            {/if}
+                                        {/each}
+                                    </div>
+                                </div>
+                            {/if}
                         {:else}
                             <div
                                 class="flex flex-col items-center justify-center p-12 text-center"

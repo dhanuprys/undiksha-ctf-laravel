@@ -30,15 +30,20 @@ class TeamController extends Controller
                 $query->select('users.id', 'name', 'email');
             }])
             ->withSum('submissions as total_score', 'points_awarded')
+            ->withCount(['submissions as correct_submissions_count' => fn ($q) => $q->where('is_correct', true)])
             ->first();
 
+        $submissions = null;
         if ($team) {
-            // Only load correct submissions for the activity feed
-            $team->load(['submissions' => fn ($q) => $q->where('is_correct', true)->with('challenge:id,title')->orderByDesc('created_at')]);
+            $submissions = $team->submissions()
+                ->with(['challenge:id,title', 'user:id,name'])
+                ->orderByDesc('created_at')
+                ->paginate(10);
         }
 
         return Inertia::render('competition/Team', [
             'team' => $team,
+            'submissions' => $submissions,
             'maxTeamSize' => $maxTeamSize,
         ]);
     }

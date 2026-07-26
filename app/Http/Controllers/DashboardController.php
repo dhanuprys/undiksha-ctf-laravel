@@ -66,10 +66,9 @@ class DashboardController extends Controller
                 }
 
                 $recentSubmissions = $currentTeam->submissions()
-                    ->where('is_correct', true)
-                    ->with('challenge:id,title,category_id', 'challenge.category:id,name')
+                    ->with(['challenge:id,title,category_id', 'challenge.category:id,name', 'user:id,name'])
                     ->orderBy('created_at', 'desc')
-                    ->take(5)
+                    ->take(3)
                     ->get();
             }
         }

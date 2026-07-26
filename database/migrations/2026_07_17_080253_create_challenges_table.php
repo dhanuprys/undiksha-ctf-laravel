@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('challenges', function (Blueprint $table) {
             $table->id();
             $table->foreignId('event_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->restrictOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedInteger('base_score');

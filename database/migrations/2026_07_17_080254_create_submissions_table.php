@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('challenge_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('challenge_id')->constrained()->restrictOnDelete();
             $table->string('submitted_flag');
             $table->boolean('is_correct');
             $table->integer('points_awarded');

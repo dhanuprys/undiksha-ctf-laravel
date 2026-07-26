@@ -38,6 +38,16 @@ class SubmissionResource extends Resource
         return false;
     }
 
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return SubmissionForm::configure($schema);

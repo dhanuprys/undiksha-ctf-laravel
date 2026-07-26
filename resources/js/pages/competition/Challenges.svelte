@@ -128,6 +128,8 @@
         {/if}
     </div>
 
+    <div class="w-full border-b mb-10"></div>
+
     {#if status === 'not_started'}
         <div
             class="flex h-64 items-center justify-center rounded-xl border border-dashed border-border text-center"

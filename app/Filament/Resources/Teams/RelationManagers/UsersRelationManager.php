@@ -26,12 +26,26 @@ class UsersRelationManager extends RelationManager
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama Lengkap')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('Alamat Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->label('Kata Sandi (Kosongkan jika tidak ingin mengubah)')
+                    ->password()
+                    ->dehydrateStateUsing(fn ($state) => \Illuminate\Support\Facades\Hash::make($state))
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->maxLength(255)
+                    ->confirmed(),
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Konfirmasi Kata Sandi')
+                    ->password()
+                    ->requiredWith('password')
+                    ->dehydrated(false),
             ]);
     }
 
@@ -52,6 +66,9 @@ class UsersRelationManager extends RelationManager
                 CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['is_admin'] = false;
+                        if (empty($data['password'])) {
+                            $data['password'] = \Illuminate\Support\Facades\Hash::make('password');
+                        }
 
                         return $data;
                     }),

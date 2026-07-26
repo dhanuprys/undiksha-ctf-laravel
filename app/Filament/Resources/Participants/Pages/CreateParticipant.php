@@ -12,6 +12,9 @@ class CreateParticipant extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['is_admin'] = false;
+        if (empty($data['password'])) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make('password');
+        }
 
         return $data;
     }

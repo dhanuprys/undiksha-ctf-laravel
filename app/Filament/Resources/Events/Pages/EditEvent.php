@@ -18,6 +18,11 @@ class EditEvent extends EditRecord
         ];
     }
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getSaveFormAction(): Action
     {
         return parent::getSaveFormAction()

@@ -7,7 +7,7 @@
 </script>
 
 <script lang="ts">
-    import { Form } from '@inertiajs/svelte';
+    import { Form, page } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import InputError from '@/components/InputError.svelte';
     import PasskeyVerify from '@/components/PasskeyVerify.svelte';
@@ -24,13 +24,26 @@
     let {
         status = '',
         canResetPassword,
+        turnstileSiteKey,
     }: {
         status?: string;
         canResetPassword: boolean;
+        turnstileSiteKey: string;
     } = $props();
+
+    $effect(() => {
+        if (Object.keys(page.props.errors || {}).length > 0) {
+            if (typeof window !== 'undefined' && (window as any).turnstile) {
+                (window as any).turnstile.reset();
+            }
+        }
+    });
 </script>
 
 <AppHead title="Masuk" />
+<svelte:head>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</svelte:head>
 
 {#if status}
     <div class="mb-4 text-center text-sm font-medium text-green-600">
@@ -43,6 +56,7 @@
 <Form
     {...store.form()}
     resetOnSuccess={['password']}
+    resetOnError={['password']}
     class="flex flex-col gap-6"
 >
     {#snippet children({ errors, processing })}
@@ -84,6 +98,11 @@
                     <Checkbox id="remember" name="remember" />
                     <span>Ingat saya</span>
                 </Label>
+            </div>
+
+            <div class="grid gap-2">
+                <div class="cf-turnstile" data-language="id" data-theme="light" data-size="flexible" data-sitekey={turnstileSiteKey}></div>
+                <InputError message={errors['cf-turnstile-response']} />
             </div>
 
             <Button

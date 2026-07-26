@@ -26,6 +26,11 @@ class FortifyServiceProvider extends ServiceProvider
             LoginResponse::class,
             \App\Http\Responses\LoginResponse::class
         );
+
+        $this->app->bind(
+            \Laravel\Fortify\Http\Requests\LoginRequest::class,
+            \App\Http\Requests\Auth\LoginRequest::class
+        );
     }
 
     /**
@@ -55,6 +60,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(fn (Request $request) => Inertia::render('auth/Login', [
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'status' => $request->session()->get('status'),
+            'turnstileSiteKey' => config('services.turnstile.site_key'),
         ]));
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/ResetPassword', [

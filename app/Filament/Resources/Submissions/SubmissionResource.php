@@ -18,11 +18,11 @@ class SubmissionResource extends Resource
 {
     protected static ?string $model = Submission::class;
 
-    protected static ?string $modelLabel = 'Pengumpulan';
+    protected static ?string $modelLabel = 'Log Jawaban Soal';
 
-    protected static ?string $pluralModelLabel = 'Pengumpulan';
+    protected static ?string $pluralModelLabel = 'Log Jawaban Soal';
 
-    protected static ?string $navigationLabel = 'Pengumpulan';
+    protected static ?string $navigationLabel = 'Log Jawaban Soal';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentCheck;
 

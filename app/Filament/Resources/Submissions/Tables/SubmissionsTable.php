@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Submissions\Tables;
 
 use App\Models\Event;
+use App\Filament\Exports\SubmissionExporter;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -68,8 +70,16 @@ class SubmissionsTable
                     ->searchable(),
             ])
             ->headerActions([
-                // We could add ExportAction here if we had an exporter class.
-                // For now, we omit it or create a simple one if requested.
+                ExportAction::make()
+                    ->exporter(SubmissionExporter::class)
+                    ->formats([
+                        ExportFormat::Xlsx,
+                    ])
+                    ->label('Ekspor ke Excel (XLSX)')
+                    ->modifyQueryUsing(fn (Builder $query, array $options) => $query->whereHas(
+                        'challenge',
+                        fn (Builder $query) => $query->where('event_id', $options['event_id'])
+                    )),
             ])
             ->recordActions([
                 ViewAction::make()

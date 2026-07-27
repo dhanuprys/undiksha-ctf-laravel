@@ -16,7 +16,8 @@
     import { Label } from '@/components/ui/label';
     import { Spinner } from '@/components/ui/spinner';
     import { login } from '@/routes';
-    import { email } from '@/routes/password';
+    // import { email } from '@/routes/password';
+    const email = { form: () => ({ url: '', method: 'post' as const }) };
 
     let {
         status = '',

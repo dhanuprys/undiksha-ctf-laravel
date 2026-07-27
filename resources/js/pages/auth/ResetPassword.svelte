@@ -14,7 +14,8 @@
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import { Spinner } from '@/components/ui/spinner';
-    import { update } from '@/routes/password';
+    // import { update } from '@/routes/password';
+    const update = { form: () => ({ url: '', method: 'post' as const }) };
 
     let {
         token,

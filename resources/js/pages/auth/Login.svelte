@@ -13,22 +13,18 @@
     import InputError from '@/components/InputError.svelte';
     import PasskeyVerify from '@/components/PasskeyVerify.svelte';
     import PasswordInput from '@/components/PasswordInput.svelte';
-    import TextLink from '@/components/TextLink.svelte';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import { Spinner } from '@/components/ui/spinner';
     import { store } from '@/routes/login';
-    import { request } from '@/routes/password';
 
     let {
         status = '',
-        canResetPassword,
         turnstileSiteKey,
     }: {
         status?: string;
-        canResetPassword: boolean;
         turnstileSiteKey: string;
     } = $props();
 
@@ -141,11 +137,6 @@
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
                     <Label for="password">Kata Sandi</Label>
-                    {#if canResetPassword}
-                        <TextLink href={request()} class="text-sm">
-                            Lupa kata sandi Anda?
-                        </TextLink>
-                    {/if}
                 </div>
                 <PasswordInput
                     id="password"

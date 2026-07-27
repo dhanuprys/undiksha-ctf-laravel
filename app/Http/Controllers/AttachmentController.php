@@ -19,16 +19,16 @@ class AttachmentController extends Controller
         }
 
         if ($activeEvent->start_time && now()->lt($activeEvent->start_time)) {
-            abort(403, 'Kompetisi belum dimulai.');
+            return redirect()->route('dashboard')->with('error', 'Kompetisi belum dimulai.');
         }
 
         if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
-            abort(403, 'Kompetisi sudah berakhir.');
+            return redirect()->route('dashboard')->with('error', 'Kompetisi sudah berakhir.');
         }
 
         $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();
         if (! $currentTeam) {
-            abort(403, 'Anda belum bergabung dalam tim.');
+            return redirect()->route('dashboard')->with('error', 'Anda belum bergabung dalam tim.');
         }
 
         // Validate attachment belongs to an active challenge in the active event

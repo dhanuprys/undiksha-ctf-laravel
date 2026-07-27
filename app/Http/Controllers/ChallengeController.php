@@ -127,12 +127,12 @@ class ChallengeController extends Controller
         }
 
         if (now()->lt($activeEvent->start_time)) {
-            abort(403, 'Kompetisi belum dimulai.');
+            return redirect()->route('dashboard')->with('error', 'Kompetisi belum dimulai.');
         }
 
         $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();
         if (! $currentTeam) {
-            abort(403, 'Anda belum bergabung dalam tim.');
+            return redirect()->route('dashboard')->with('error', 'Anda belum bergabung dalam tim.');
         }
 
         $challenge->load(['category', 'attachments']);

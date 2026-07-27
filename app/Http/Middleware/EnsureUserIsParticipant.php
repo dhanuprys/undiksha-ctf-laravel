@@ -15,8 +15,12 @@ class EnsureUserIsParticipant
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->check() || auth()->user()->isAdmin()) {
-            abort(403, 'Unauthorized access.');
+        if (! auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        if (auth()->user()->isAdmin()) {
+            return redirect('/admin');
         }
 
         return $next($request);

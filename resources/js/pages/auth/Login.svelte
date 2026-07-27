@@ -8,6 +8,7 @@
 
 <script lang="ts">
     import { Form, page } from '@inertiajs/svelte';
+    import type { Action } from 'svelte/action';
     import AppHead from '@/components/AppHead.svelte';
     import InputError from '@/components/InputError.svelte';
     import PasskeyVerify from '@/components/PasskeyVerify.svelte';
@@ -31,10 +32,69 @@
         turnstileSiteKey: string;
     } = $props();
 
+    let turnstileToken = $state('');
+    let turnstileWidgetId = $state<string | undefined>(undefined);
+
+    const turnstileAction: Action<HTMLDivElement> = (node) => {
+        let checkInterval: ReturnType<typeof setInterval>;
+
+        function renderTurnstile() {
+            if (typeof window !== 'undefined' && (window as any).turnstile) {
+                turnstileWidgetId = (window as any).turnstile.render(node, {
+                    sitekey: turnstileSiteKey,
+                    size: 'flexible',
+                    language: 'id',
+                    theme: 'light',
+                    callback: (token: string) => {
+                        turnstileToken = token;
+                    },
+                    'expired-callback': () => {
+                        turnstileToken = '';
+                    },
+                    'error-callback': () => {
+                        turnstileToken = '';
+                    },
+                });
+            }
+        }
+
+        if (typeof window !== 'undefined' && (window as any).turnstile) {
+            renderTurnstile();
+        } else if (typeof window !== 'undefined') {
+            checkInterval = setInterval(() => {
+                if ((window as any).turnstile) {
+                    clearInterval(checkInterval);
+                    renderTurnstile();
+                }
+            }, 100);
+        }
+
+        return {
+            destroy() {
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                }
+
+                if (
+                    turnstileWidgetId !== undefined &&
+                    typeof window !== 'undefined' &&
+                    (window as any).turnstile
+                ) {
+                    (window as any).turnstile.remove(turnstileWidgetId);
+                }
+            },
+        };
+    };
+
     $effect(() => {
         if (Object.keys(page.props.errors || {}).length > 0) {
-            if (typeof window !== 'undefined' && (window as any).turnstile) {
-                (window as any).turnstile.reset();
+            if (
+                typeof window !== 'undefined' &&
+                (window as any).turnstile &&
+                turnstileWidgetId !== undefined
+            ) {
+                (window as any).turnstile.reset(turnstileWidgetId);
+                turnstileToken = '';
             }
         }
     });
@@ -42,7 +102,11 @@
 
 <AppHead title="Masuk" />
 <svelte:head>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        async
+        defer
+    ></script>
 </svelte:head>
 
 {#if status}
@@ -101,14 +165,14 @@
             </div>
 
             <div class="grid gap-2">
-                <div class="cf-turnstile" data-language="id" data-theme="light" data-size="flexible" data-sitekey={turnstileSiteKey}></div>
+                <div use:turnstileAction></div>
                 <InputError message={errors['cf-turnstile-response']} />
             </div>
 
             <Button
                 type="submit"
                 class="mt-4 w-full"
-                disabled={processing}
+                disabled={processing || !turnstileToken}
                 data-test="login-button"
             >
                 {#if processing}<Spinner />{/if}

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Submission extends Model
 {
@@ -46,8 +47,8 @@ class Submission extends Model
             if ($submission->is_correct) {
                 $challenge = $submission->challenge;
                 if ($challenge) {
-                    \Illuminate\Support\Facades\Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
-                    \Illuminate\Support\Facades\Cache::forget('leaderboard_event_'.$challenge->event_id);
+                    Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+                    Cache::forget('leaderboard_event_'.$challenge->event_id);
                 }
             }
         });

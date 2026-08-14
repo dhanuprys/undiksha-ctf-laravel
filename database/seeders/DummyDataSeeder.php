@@ -11,6 +11,7 @@ use App\Models\Setting;
 use App\Models\Submission;
 use App\Models\Team;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -211,7 +212,7 @@ class DummyDataSeeder extends Seeder
                     $challenge = $challenges->random();
                     $user = $teamUsers->random();
                     $maxEndTime = $event->end_time < now() ? $event->end_time : now();
-                    $submitTime = \Carbon\Carbon::createFromTimestamp(rand($event->start_time->timestamp, $maxEndTime->timestamp));
+                    $submitTime = Carbon::createFromTimestamp(rand($event->start_time->timestamp, $maxEndTime->timestamp));
 
                     Submission::factory()->incorrect()->create([
                         'user_id' => $user->id,
@@ -237,7 +238,7 @@ class DummyDataSeeder extends Seeder
                     $user = $teamUsers->random(); // Random member submits
 
                     $maxEndTime = $event->end_time < now() ? $event->end_time : now();
-                    $submitTime = clone \Carbon\Carbon::createFromTimestamp(rand($event->start_time->timestamp, $maxEndTime->timestamp));
+                    $submitTime = clone Carbon::createFromTimestamp(rand($event->start_time->timestamp, $maxEndTime->timestamp));
 
                     // 1-3 incorrect submissions before correct one
                     $incorrectCount = rand(0, 3);

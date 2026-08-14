@@ -6,6 +6,7 @@ use App\Enums\ChallengeLevel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -60,11 +61,11 @@ class Challenge extends Model
         parent::boot();
 
         static::saved(function (Challenge $challenge) {
-            \Illuminate\Support\Facades\Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+            Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
         });
 
         static::deleted(function (Challenge $challenge) {
-            \Illuminate\Support\Facades\Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+            Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
         });
     }
 

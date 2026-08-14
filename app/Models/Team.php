@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -42,11 +43,11 @@ class Team extends Model
         });
 
         static::saved(function (Team $team) {
-            \Illuminate\Support\Facades\Cache::forget('leaderboard_event_'.$team->event_id);
+            Cache::forget('leaderboard_event_'.$team->event_id);
         });
 
         static::deleted(function (Team $team) {
-            \Illuminate\Support\Facades\Cache::forget('leaderboard_event_'.$team->event_id);
+            Cache::forget('leaderboard_event_'.$team->event_id);
         });
     }
 

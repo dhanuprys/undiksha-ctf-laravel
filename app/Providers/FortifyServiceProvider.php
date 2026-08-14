@@ -14,6 +14,7 @@ use Inertia\Inertia;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Http\Requests\LoginRequest;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -28,7 +29,7 @@ class FortifyServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \Laravel\Fortify\Http\Requests\LoginRequest::class,
+            LoginRequest::class,
             \App\Http\Requests\Auth\LoginRequest::class
         );
     }

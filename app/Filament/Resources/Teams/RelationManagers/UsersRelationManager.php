@@ -16,6 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 
 class UsersRelationManager extends RelationManager
 {
@@ -37,7 +38,7 @@ class UsersRelationManager extends RelationManager
                 Forms\Components\TextInput::make('password')
                     ->label('Kata Sandi (Kosongkan jika tidak ingin mengubah)')
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => \Illuminate\Support\Facades\Hash::make($state))
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
                     ->confirmed(),
@@ -67,7 +68,7 @@ class UsersRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['is_admin'] = false;
                         if (empty($data['password'])) {
-                            $data['password'] = \Illuminate\Support\Facades\Hash::make('password');
+                            $data['password'] = Hash::make('password');
                         }
 
                         return $data;

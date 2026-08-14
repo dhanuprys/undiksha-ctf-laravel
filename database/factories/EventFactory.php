@@ -18,7 +18,7 @@ class EventFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Bulfest CTF ' . date('Y'),
+            'name' => 'Bulfest CTF '.date('Y'),
             'year' => date('Y'),
             'is_active' => (bool) mt_rand(0, 1),
             'start_time' => now()->subDays(mt_rand(1, 30)),

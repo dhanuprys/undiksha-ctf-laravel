@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Submissions\Tables;
 
-use App\Models\Event;
 use App\Filament\Exports\SubmissionExporter;
-use Filament\Actions\Exports\Enums\ExportFormat;
+use App\Models\Event;
 use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;

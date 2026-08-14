@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Category>
@@ -18,7 +19,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Category ' . \Illuminate\Support\Str::random(5),
+            'name' => 'Category '.Str::random(5),
             'description' => 'Dummy category description',
         ];
     }

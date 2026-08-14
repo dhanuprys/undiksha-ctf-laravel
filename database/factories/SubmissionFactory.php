@@ -7,6 +7,7 @@ use App\Models\Submission;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Submission>
@@ -24,7 +25,7 @@ class SubmissionFactory extends Factory
             'user_id' => User::factory(),
             'team_id' => Team::factory(),
             'challenge_id' => Challenge::factory(),
-            'submitted_flag' => 'CTF{' . \Illuminate\Support\Str::random(10) . '}',
+            'submitted_flag' => 'CTF{'.Str::random(10).'}',
             'is_correct' => false,
             'points_awarded' => 0,
         ];

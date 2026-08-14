@@ -84,15 +84,15 @@ class Event extends Model
     {
         $attributes = Cache::rememberForever('active_event_attributes', function () {
             $event = self::where('is_active', true)->first();
-            
+
             return $event ? $event->getAttributes() : null;
         });
 
         if ($attributes) {
-            $event = new self();
+            $event = new self;
             $event->setRawAttributes($attributes, true);
             $event->exists = true;
-            
+
             return $event;
         }
 

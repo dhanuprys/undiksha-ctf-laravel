@@ -7,6 +7,7 @@ use App\Models\Challenge;
 use App\Models\Event;
 use App\Services\ScoringService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Stevebauman\Purify\Facades\Purify;
@@ -70,7 +71,7 @@ class ChallengeController extends Controller
         $showSolverCount = filter_var($activeEvent->getSetting('show_solver_count', true), FILTER_VALIDATE_BOOLEAN);
         $degradationRate = $this->scoringService->getDegradationRate($activeEvent->id);
 
-        $cachedCategories = \Illuminate\Support\Facades\Cache::rememberForever('event_'.$activeEvent->id.'_categories_challenges', function () use ($activeEvent) {
+        $cachedCategories = Cache::rememberForever('event_'.$activeEvent->id.'_categories_challenges', function () use ($activeEvent) {
             return Category::whereHas('challenges', function ($query) use ($activeEvent) {
                 $query->where('event_id', $activeEvent->id)->where('is_active', true);
             })

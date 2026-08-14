@@ -2,12 +2,15 @@
 
 namespace App\Filament\Exports;
 
+use App\Models\Event;
 use App\Models\Submission;
+use Carbon\Carbon;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Illuminate\Support\Number;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 
 class SubmissionExporter extends Exporter
 {
@@ -15,12 +18,12 @@ class SubmissionExporter extends Exporter
 
     public static function getColumns(): array
     {
-        $sanitize = fn (?string $state): ?string => $state && str($state)->startsWith(['=', '+', '-', '@']) ? "'" . $state : $state;
+        $sanitize = fn (?string $state): ?string => $state && str($state)->startsWith(['=', '+', '-', '@']) ? "'".$state : $state;
 
         return [
             ExportColumn::make('created_at')
                 ->label('Waktu Submit')
-                ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->format('d M Y, H:i:s') : null),
+                ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->format('d M Y, H:i:s') : null),
             ExportColumn::make('user.name')
                 ->label('Nama Pengguna')
                 ->formatStateUsing($sanitize),
@@ -43,10 +46,10 @@ class SubmissionExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Ekspor data Log Jawaban Soal telah selesai. ' . Number::format($export->successful_rows) . ' baris berhasil diekspor.';
+        $body = 'Ekspor data Log Jawaban Soal telah selesai. '.Number::format($export->successful_rows).' baris berhasil diekspor.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . Number::format($failedRowsCount) . ' baris gagal diekspor.';
+            $body .= ' '.Number::format($failedRowsCount).' baris gagal diekspor.';
         }
 
         return $body;
@@ -60,9 +63,9 @@ class SubmissionExporter extends Exporter
     public static function getOptionsFormComponents(): array
     {
         return [
-            \Filament\Forms\Components\Select::make('event_id')
+            Select::make('event_id')
                 ->label('Acara (Event)')
-                ->options(\App\Models\Event::pluck('name', 'id'))
+                ->options(Event::pluck('name', 'id'))
                 ->required()
                 ->searchable(),
         ];
@@ -76,9 +79,9 @@ class SubmissionExporter extends Exporter
     public function getFileName(Export $export): string
     {
         $eventName = 'All Events';
-        
+
         if (isset($this->options['event_id'])) {
-            $event = \App\Models\Event::find($this->options['event_id']);
+            $event = Event::find($this->options['event_id']);
             if ($event) {
                 $eventName = $event->name;
             }

@@ -5,7 +5,6 @@ use App\Models\Challenge;
 use App\Models\Event;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 
 beforeEach(function () {
@@ -29,7 +28,7 @@ beforeEach(function () {
     $this->team = Team::factory()->create([
         'event_id' => $this->event->id,
     ]);
-    
+
     // Attach user to team
     $this->team->users()->attach($this->user->id);
 });

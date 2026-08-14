@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Challenge;
-use App\Models\Setting;
+use App\Models\Event;
 use App\Models\Submission;
 use App\Models\Team;
 use Exception;
@@ -100,9 +100,9 @@ class ScoringService
      */
     public function getDegradationRate(?int $eventId): float
     {
-        $event = \App\Models\Event::getActiveEvent();
+        $event = Event::getActiveEvent();
         if (! $event || $event->id !== $eventId) {
-            $event = \App\Models\Event::find($eventId);
+            $event = Event::find($eventId);
         }
 
         $value = $event ? $event->getSetting('degradation_rate') : null;
@@ -116,9 +116,9 @@ class ScoringService
      */
     public function getPenaltyRate(?int $eventId): float
     {
-        $event = \App\Models\Event::getActiveEvent();
+        $event = Event::getActiveEvent();
         if (! $event || $event->id !== $eventId) {
-            $event = \App\Models\Event::find($eventId);
+            $event = Event::find($eventId);
         }
 
         $value = $event ? $event->getSetting('penalty_deduction') : null;

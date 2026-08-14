@@ -23,20 +23,20 @@ class ScoringService
             // Lock the challenge row to serialize concurrent submissions for the same challenge
             $lockedChallenge = Challenge::where('id', $challenge->id)->lockForUpdate()->firstOrFail();
 
+            // Check if already solved by this team (within the lock to prevent race conditions)
+            $alreadySolved = Submission::where('challenge_id', $lockedChallenge->id)
+                ->where('team_id', $team->id)
+                ->where('is_correct', true)
+                ->exists();
+
+            if ($alreadySolved) {
+                throw new Exception('Tantangan ini sudah diselesaikan oleh tim Anda.');
+            }
+
             // Trim whitespace to prevent accidental mismatches
             $isCorrect = trim($flag) === trim($lockedChallenge->flag);
 
             if ($isCorrect) {
-                // Check if already solved by this team (within the lock to prevent race conditions)
-                $alreadySolved = Submission::where('challenge_id', $lockedChallenge->id)
-                    ->where('team_id', $team->id)
-                    ->where('is_correct', true)
-                    ->exists();
-
-                if ($alreadySolved) {
-                    throw new Exception('Tantangan ini sudah diselesaikan oleh tim Anda.');
-                }
-
                 $solvedCount = Submission::where('challenge_id', $lockedChallenge->id)
                     ->where('is_correct', true)
                     ->count();
@@ -100,9 +100,12 @@ class ScoringService
      */
     public function getDegradationRate(?int $eventId): float
     {
-        $value = Setting::where('event_id', $eventId)
-            ->where('key', 'degradation_rate')
-            ->value('value');
+        $event = \App\Models\Event::getActiveEvent();
+        if (! $event || $event->id !== $eventId) {
+            $event = \App\Models\Event::find($eventId);
+        }
+
+        $value = $event ? $event->getSetting('degradation_rate') : null;
 
         return $value !== null ? (float) $value : 0.10;
     }
@@ -113,9 +116,12 @@ class ScoringService
      */
     public function getPenaltyRate(?int $eventId): float
     {
-        $value = Setting::where('event_id', $eventId)
-            ->where('key', 'penalty_deduction')
-            ->value('value');
+        $event = \App\Models\Event::getActiveEvent();
+        if (! $event || $event->id !== $eventId) {
+            $event = \App\Models\Event::find($eventId);
+        }
+
+        $value = $event ? $event->getSetting('penalty_deduction') : null;
 
         return $value !== null ? (float) $value : 0.05;
     }

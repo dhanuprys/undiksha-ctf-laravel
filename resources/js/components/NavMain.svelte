@@ -32,6 +32,7 @@
             <SidebarMenuItem>
                 <SidebarMenuButton
                     asChild
+                    size="lg"
                     isActive={url.isCurrentUrl(item.href, url.currentUrl)}
                     tooltip={item.title}
                 >

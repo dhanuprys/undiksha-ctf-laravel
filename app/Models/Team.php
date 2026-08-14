@@ -40,6 +40,14 @@ class Team extends Model
                 $team->join_code = $code;
             }
         });
+
+        static::saved(function (Team $team) {
+            \Illuminate\Support\Facades\Cache::forget('leaderboard_event_'.$team->event_id);
+        });
+
+        static::deleted(function (Team $team) {
+            \Illuminate\Support\Facades\Cache::forget('leaderboard_event_'.$team->event_id);
+        });
     }
 
     public function event()

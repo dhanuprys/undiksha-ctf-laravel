@@ -6,6 +6,7 @@ use App\Http\Requests\JoinTeamRequest;
 use App\Models\Event;
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class TeamController extends Controller
@@ -13,7 +14,7 @@ class TeamController extends Controller
     public function show(Request $request)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         if (! $activeEvent) {
             return Inertia::render('competition/Team', [
@@ -51,12 +52,19 @@ class TeamController extends Controller
     public function join(JoinTeamRequest $request)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         if (! $activeEvent) {
             return back()->with('flash', [
                 'type' => 'error',
                 'message' => 'Tidak ada acara yang sedang aktif.',
+            ]);
+        }
+
+        if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
+            return back()->with('flash', [
+                'type' => 'error',
+                'message' => 'Kompetisi sudah berakhir. Anda tidak dapat bergabung dengan tim lagi.',
             ]);
         }
 
@@ -92,6 +100,8 @@ class TeamController extends Controller
 
         // Attach user to team
         $user->teams()->attach($team->id);
+
+        Cache::forget("user_{$user->id}_team_event_{$activeEvent->id}");
 
         return back()->with('flash', [
             'type' => 'success',

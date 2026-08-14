@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -57,6 +58,11 @@ class Event extends Model
                     ->where('is_active', true)
                     ->update(['is_active' => false]);
             }
+            Cache::forget('active_event_attributes');
+        });
+
+        static::deleted(function (Event $event) {
+            Cache::forget('active_event_attributes');
         });
     }
 
@@ -67,8 +73,29 @@ class Event extends Model
 
     public function getSetting(string $key, mixed $default = null): mixed
     {
-        $setting = $this->settings()->where('key', $key)->first();
+        $settings = Cache::rememberForever('event_'.$this->id.'_settings', function () {
+            return $this->settings()->pluck('value', 'key')->toArray();
+        });
 
-        return $setting ? $setting->value : $default;
+        return array_key_exists($key, $settings) ? $settings[$key] : $default;
+    }
+
+    public static function getActiveEvent(): ?self
+    {
+        $attributes = Cache::rememberForever('active_event_attributes', function () {
+            $event = self::where('is_active', true)->first();
+            
+            return $event ? $event->getAttributes() : null;
+        });
+
+        if ($attributes) {
+            $event = new self();
+            $event->setRawAttributes($attributes, true);
+            $event->exists = true;
+            
+            return $event;
+        }
+
+        return null;
     }
 }

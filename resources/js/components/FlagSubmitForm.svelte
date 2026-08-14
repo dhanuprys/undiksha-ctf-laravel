@@ -10,7 +10,7 @@
     import { store as submitFlagRoute } from '@/routes/submissions';
 
     let props: { challengeId: number; disabled?: boolean } = $props();
-    
+
     let confirmed = $state(false);
 
     // svelte-ignore state_referenced_locally
@@ -28,7 +28,7 @@
             },
             onFinish: () => {
                 confirmed = false;
-            }
+            },
         });
     }
 </script>
@@ -41,13 +41,16 @@
     class="flex flex-col gap-4 mt-6"
 >
     <div class="grid gap-3">
-        <Label for={`flag-${props.challengeId}`} class="text-sm font-semibold text-foreground/80">
+        <Label
+            for={`flag-${props.challengeId}`}
+            class="text-sm font-semibold text-foreground/80"
+        >
             Kirim Flag
         </Label>
-        
+
         <div class="relative group">
-            <Flag 
-                class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" 
+            <Flag
+                class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors"
             />
             <Input
                 id={`flag-${props.challengeId}`}
@@ -60,10 +63,12 @@
             />
         </div>
 
-        <div class="flex items-start space-x-3 mt-1 p-3.5 rounded-lg border border-border/70 bg-muted/30 hover:bg-muted/50 transition-all shadow-sm hover:shadow-md">
-            <Checkbox 
-                id={`confirm-submit-${props.challengeId}`} 
-                bind:checked={confirmed} 
+        <div
+            class="flex items-start space-x-3 mt-1 p-3.5 rounded-lg border border-border/70 bg-muted/30 hover:bg-muted/50 transition-all shadow-sm hover:shadow-md"
+        >
+            <Checkbox
+                id={`confirm-submit-${props.challengeId}`}
+                bind:checked={confirmed}
                 disabled={props.disabled || form.processing || !form.flag}
                 class="mt-0.5"
             />
@@ -75,14 +80,18 @@
                     Konfirmasi Pengiriman
                 </span>
                 <span class="text-xs text-muted-foreground">
-                    Saya yakin flag ini benar. (Penalti akan dikenakan jika salah)
+                    Saya yakin flag ini benar. (Penalti akan dikenakan jika
+                    salah)
                 </span>
             </label>
         </div>
 
         <Button
             type="submit"
-            disabled={form.processing || props.disabled || !form.flag || !confirmed}
+            disabled={form.processing ||
+                props.disabled ||
+                !form.flag ||
+                !confirmed}
             class="h-11 w-full sm:w-auto transition-all shadow-sm gap-2 mt-2"
         >
             {#if form.processing}

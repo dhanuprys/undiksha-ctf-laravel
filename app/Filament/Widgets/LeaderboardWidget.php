@@ -19,7 +19,7 @@ class LeaderboardWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         return $table
             ->query(

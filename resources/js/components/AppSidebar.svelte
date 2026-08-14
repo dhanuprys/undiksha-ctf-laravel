@@ -91,7 +91,7 @@
 
         <!-- Mini Team Summary Widget -->
         <SidebarGroup
-            class="mt-auto pt-6 px-4 hidden group-data-[collapsible=icon]:hidden md:block"
+            class="mt-auto pt-6 hidden group-data-[collapsible=icon]:hidden md:block"
         >
             <div
                 class="rounded-xl border border-border/50 bg-muted/30 p-4 shadow-sm relative overflow-hidden"
@@ -104,7 +104,9 @@
                         {team.name}
                     </h4>
                     <div class="flex items-end gap-1.5 mt-2">
-                        <span class="text-xs text-muted-foreground pb-0.5 font-medium uppercase tracking-wider">
+                        <span
+                            class="text-xs text-muted-foreground pb-0.5 font-medium uppercase tracking-wider"
+                        >
                             Tim Kompetisi
                         </span>
                     </div>

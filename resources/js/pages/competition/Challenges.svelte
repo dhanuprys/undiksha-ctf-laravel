@@ -230,7 +230,8 @@
                                                 >
                                                     {challenge.solved_by_team
                                                         ? challenge.points_awarded
-                                                        : challenge.dynamic_score} pts
+                                                        : challenge.dynamic_score}
+                                                    pts
                                                 </div>
                                             </div>
                                             <CardTitle

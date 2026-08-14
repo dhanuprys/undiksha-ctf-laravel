@@ -17,8 +17,6 @@
     import AppHead from '@/components/AppHead.svelte';
     import Heading from '@/components/Heading.svelte';
     import InputError from '@/components/InputError.svelte';
-    import ManagePasskeys from '@/components/ManagePasskeys.svelte';
-    import type { Props as ManagePasskeysProps } from '@/components/ManagePasskeys.svelte';
     import ManageTwoFactor from '@/components/ManageTwoFactor.svelte';
     import PasswordInput from '@/components/PasswordInput.svelte';
     import { Button } from '@/components/ui/button';
@@ -28,12 +26,6 @@
         Boolean(page.props.requiresConfirmation),
     );
     const twoFactorEnabled = $derived(Boolean(page.props.twoFactorEnabled));
-    const canManagePasskeys = $derived(Boolean(page.props.canManagePasskeys));
-    const passkeys = $derived(
-        (Array.isArray(page.props.passkeys)
-            ? page.props.passkeys
-            : []) as ManagePasskeysProps['passkeys'],
-    );
 
     let { passwordRules }: { passwordRules: string } = $props();
 </script>
@@ -113,5 +105,3 @@
     {requiresConfirmation}
     {twoFactorEnabled}
 />
-
-<ManagePasskeys {canManagePasskeys} {passkeys} />

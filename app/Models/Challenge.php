@@ -55,6 +55,19 @@ class Challenge extends Model
         return $this->hasMany(ChallengeAttachment::class);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function (Challenge $challenge) {
+            \Illuminate\Support\Facades\Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+        });
+
+        static::deleted(function (Challenge $challenge) {
+            \Illuminate\Support\Facades\Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+        });
+    }
+
     public function getCorrectSubmissionsCountAttribute(): int
     {
         return $this->submissions()->where('is_correct', true)->count();

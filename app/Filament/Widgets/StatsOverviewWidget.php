@@ -16,7 +16,8 @@ class StatsOverviewWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $activeEventsCount = Event::where('is_active', true)->count();
+        $activeEvent = Event::getActiveEvent();
+        $activeEventsCount = $activeEvent ? 1 : 0;
         $totalEvents = Event::count();
 
         $activeChallengesCount = Challenge::where('is_active', true)->count();

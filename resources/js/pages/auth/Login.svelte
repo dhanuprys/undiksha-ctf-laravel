@@ -11,7 +11,6 @@
     import type { Action } from 'svelte/action';
     import AppHead from '@/components/AppHead.svelte';
     import InputError from '@/components/InputError.svelte';
-    import PasskeyVerify from '@/components/PasskeyVerify.svelte';
     import PasswordInput from '@/components/PasswordInput.svelte';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
@@ -110,8 +109,6 @@
         {status}
     </div>
 {/if}
-
-<PasskeyVerify />
 
 <Form
     {...store.form()}

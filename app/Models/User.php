@@ -86,7 +86,7 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
 
     public function currentTeam()
     {
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
         if (! $activeEvent) {
             return null;
         }

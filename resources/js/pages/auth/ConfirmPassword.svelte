@@ -8,13 +8,8 @@
 
 <script lang="ts">
     import { Form } from '@inertiajs/svelte';
-    import {
-        index as confirmOptions,
-        store as confirmStore,
-    } from '@/actions/Laravel/Passkeys/Http/Controllers/PasskeyConfirmationController';
     import AppHead from '@/components/AppHead.svelte';
     import InputError from '@/components/InputError.svelte';
-    import PasskeyVerify from '@/components/PasskeyVerify.svelte';
     import PasswordInput from '@/components/PasswordInput.svelte';
     import { Button } from '@/components/ui/button';
     import { Label } from '@/components/ui/label';
@@ -23,16 +18,6 @@
 </script>
 
 <AppHead title="Konfirmasi kata sandi" />
-
-<PasskeyVerify
-    routes={{
-        options: confirmOptions(),
-        submit: confirmStore(),
-    }}
-    label="Konfirmasi dengan kunci akses (passkey)"
-    loadingLabel="Mengonfirmasi..."
-    separator="Atau konfirmasi dengan kata sandi"
-/>
 
 <Form {...store.form()} resetOnSuccess>
     {#snippet children({ errors, processing })}

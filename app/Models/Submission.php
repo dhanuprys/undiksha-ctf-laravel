@@ -38,6 +38,21 @@ class Submission extends Model
         return $this->belongsTo(Challenge::class);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function (Submission $submission) {
+            if ($submission->is_correct) {
+                $challenge = $submission->challenge;
+                if ($challenge) {
+                    \Illuminate\Support\Facades\Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+                    \Illuminate\Support\Facades\Cache::forget('leaderboard_event_'.$challenge->event_id);
+                }
+            }
+        });
+    }
+
     public function scopeCorrect(Builder $query): void
     {
         $query->where('is_correct', true);

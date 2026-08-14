@@ -32,7 +32,7 @@ class ChallengeController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         // No active event
         if (! $activeEvent) {
@@ -70,46 +70,49 @@ class ChallengeController extends Controller
         $showSolverCount = filter_var($activeEvent->getSetting('show_solver_count', true), FILTER_VALIDATE_BOOLEAN);
         $degradationRate = $this->scoringService->getDegradationRate($activeEvent->id);
 
-        $categories = Category::whereHas('challenges', function ($query) use ($activeEvent) {
-            $query->where('event_id', $activeEvent->id)->where('is_active', true);
-        })
-            ->with(['challenges' => function ($query) use ($activeEvent) {
-                $query->where('event_id', $activeEvent->id)
-                    ->where('is_active', true)
-                    ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty')
-                    ->withCount(['submissions as solve_count' => function ($q) {
-                        $q->where('is_correct', true);
-                    }]);
-            }])
-            ->get();
+        $cachedCategories = \Illuminate\Support\Facades\Cache::rememberForever('event_'.$activeEvent->id.'_categories_challenges', function () use ($activeEvent) {
+            return Category::whereHas('challenges', function ($query) use ($activeEvent) {
+                $query->where('event_id', $activeEvent->id)->where('is_active', true);
+            })
+                ->with(['challenges' => function ($query) use ($activeEvent) {
+                    $query->where('event_id', $activeEvent->id)
+                        ->where('is_active', true)
+                        ->select('id', 'category_id', 'title', 'description', 'base_score', 'difficulty')
+                        ->withCount(['submissions as solve_count' => function ($q) {
+                            $q->where('is_correct', true);
+                        }]);
+                }])
+                ->get()
+                ->toArray();
+        });
 
         $teamCorrectSubmissions = $currentTeam->submissions()
             ->where('is_correct', true)
             ->get()
             ->keyBy('challenge_id');
 
-        $categories->transform(function ($category) use ($teamCorrectSubmissions, $degradationRate, $showSolverCount) {
-            $category->challenges->transform(function ($challenge) use ($teamCorrectSubmissions, $degradationRate, $showSolverCount) {
-                $teamSubmission = $teamCorrectSubmissions->get($challenge->id);
+        $categories = array_map(function ($category) use ($teamCorrectSubmissions, $degradationRate, $showSolverCount) {
+            $category['challenges'] = array_map(function ($challenge) use ($teamCorrectSubmissions, $degradationRate, $showSolverCount) {
+                $teamSubmission = $teamCorrectSubmissions->get($challenge['id']);
 
-                $challenge->solved_by_team = $teamSubmission !== null;
-                $challenge->points_awarded = $teamSubmission?->points_awarded;
-                $challenge->dynamic_score = $this->scoringService->calculateDynamicScore(
-                    $challenge->base_score,
-                    $challenge->solve_count,
+                $challenge['solved_by_team'] = $teamSubmission !== null;
+                $challenge['points_awarded'] = $teamSubmission?->points_awarded;
+                $challenge['dynamic_score'] = $this->scoringService->calculateDynamicScore(
+                    $challenge['base_score'],
+                    $challenge['solve_count'] ?? 0,
                     $degradationRate,
                 );
-                $challenge->description = $this->sanitizeHtml($challenge->description);
+                $challenge['description'] = $this->sanitizeHtml($challenge['description']);
 
                 if (! $showSolverCount) {
-                    unset($challenge->solve_count);
+                    unset($challenge['solve_count']);
                 }
 
                 return $challenge;
-            });
+            }, $category['challenges']);
 
             return $category;
-        });
+        }, $cachedCategories);
 
         return Inertia::render('competition/Challenges', [
             'categories' => $categories,
@@ -120,7 +123,7 @@ class ChallengeController extends Controller
     public function show(Request $request, Challenge $challenge)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         if (! $activeEvent || $challenge->event_id !== $activeEvent->id || ! $challenge->is_active) {
             abort(404);
@@ -128,6 +131,10 @@ class ChallengeController extends Controller
 
         if (now()->lt($activeEvent->start_time)) {
             return redirect()->route('dashboard')->with('error', 'Kompetisi belum dimulai.');
+        }
+
+        if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
+            return redirect()->route('dashboard')->with('error', 'Kompetisi sudah berakhir.');
         }
 
         $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();

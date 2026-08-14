@@ -12,7 +12,7 @@ class AttachmentController extends Controller
     public function download(Request $request, ChallengeAttachment $attachment)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         if (! $activeEvent) {
             abort(404);

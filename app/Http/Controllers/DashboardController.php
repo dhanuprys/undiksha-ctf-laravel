@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,7 +12,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         $currentTeam = null;
         $stats = [
@@ -33,36 +34,14 @@ class DashboardController extends Controller
                 $stats['solved_count'] = $currentTeam->submissions()->where('is_correct', true)->count();
                 $stats['total_points'] = (int) ($currentTeam->total_score ?? 0);
 
-                // Calculate rank based on total score of all teams in this event
-                // Higher score is better. Tie breaker is earliest last correct submission.
-                $teamsInEvent = $activeEvent->teams()
-                    ->withSum('submissions as total_score_calc', 'points_awarded')
-                    ->withMax(['submissions as last_solve_time' => function ($query) {
-                        $query->where('is_correct', true);
-                    }], 'created_at')
-                    ->get()
-                    ->map(function ($team) {
-                        $team->total_score_calc = $team->total_score_calc ?? 0;
+                // Calculate rank based on cached leaderboard
+                $leaderboardService = app(LeaderboardService::class);
+                $cachedLeaderboard = $leaderboardService->getCachedLeaderboard($activeEvent);
+                $leaderboardArray = $cachedLeaderboard['leaderboard'];
 
-                        return $team;
-                    })
-                    ->sort(function ($a, $b) {
-                        if ($a->total_score_calc !== $b->total_score_calc) {
-                            return $b->total_score_calc <=> $a->total_score_calc;
-                        }
-                        $aTime = $a->last_solve_time ?? PHP_INT_MAX;
-                        $bTime = $b->last_solve_time ?? PHP_INT_MAX;
-
-                        return $aTime <=> $bTime;
-                    })
-                    ->values();
-
-                $rankIndex = $teamsInEvent->search(function ($team) use ($currentTeam) {
-                    return $team->id === $currentTeam->id;
-                });
-
-                if ($rankIndex !== false) {
-                    $stats['rank'] = $rankIndex + 1;
+                $teamRankData = collect($leaderboardArray)->firstWhere('team.id', $currentTeam->id);
+                if ($teamRankData) {
+                    $stats['rank'] = $teamRankData['rank'];
                 }
 
                 $recentSubmissions = $currentTeam->submissions()

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,11 +39,21 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
 
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         $currentTeam = null;
         if ($user && $activeEvent && ! $user->isAdmin()) {
-            $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();
+            $teamAttributes = Cache::remember("user_{$user->id}_team_event_{$activeEvent->id}", 60, function () use ($user, $activeEvent) {
+                $team = $user->teams()->where('event_id', $activeEvent->id)->first();
+                
+                return $team ? $team->getAttributes() : null;
+            });
+
+            if ($teamAttributes) {
+                $currentTeam = new \App\Models\Team();
+                $currentTeam->setRawAttributes($teamAttributes, true);
+                $currentTeam->exists = true;
+            }
         }
 
         return [

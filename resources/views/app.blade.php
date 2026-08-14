@@ -1,5 +1,12 @@
+<!-- DEDANLABS here! -->
+
 <!DOCTYPE html>
+
+<!-- JANGAN BUAT ANEH-ANEH DI WEB INI YA BANG :) -->
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+
+<!-- SWIPER.. JANGAN MENCURI!!! -->
 
 <head>
     <meta charset="utf-8">
@@ -51,5 +58,7 @@
 <body class="font-sans antialiased">
     <x-inertia::app />
 </body>
+
+<!-- YOK BISA YOK MAIN SEHAT -->
 
 </html>

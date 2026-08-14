@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\Submission;
-use Carbon\Carbon;
+use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +12,7 @@ class LeaderboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         if (! $activeEvent) {
             return Inertia::render('competition/Leaderboard', [
@@ -31,102 +30,16 @@ class LeaderboardController extends Controller
         }
 
         // Teams leaderboard logic
-        // Sum ALL submissions (including negative penalties) for total score
-        $teams = $activeEvent->teams()
-            ->withCount(['submissions as solved_count' => function ($query) {
-                $query->where('is_correct', true);
-            }])
-            ->withSum('submissions as score', 'points_awarded')
-            ->withMax(['submissions as last_solve_time' => function ($query) {
-                $query->where('is_correct', true);
-            }], 'created_at')
-            ->get()
-            ->map(function ($team) {
-                $team->score = $team->score ?? 0;
+        $leaderboardService = app(LeaderboardService::class);
+        $cachedData = $leaderboardService->getCachedLeaderboard($activeEvent);
 
-                return $team;
-            })
-            ->sort(function ($a, $b) {
-                // Primary: highest score first
-                if ($a->score !== $b->score) {
-                    return $b->score <=> $a->score;
-                }
-                // Tiebreaker: earliest last solve time first
-                $aTime = $a->last_solve_time ?? PHP_INT_MAX;
-                $bTime = $b->last_solve_time ?? PHP_INT_MAX;
+        $leaderboard = collect($cachedData['leaderboard'])->map(function ($entry) use ($currentTeamId) {
+            $entry['is_current_team'] = $entry['team']['id'] === $currentTeamId;
 
-                return $aTime <=> $bTime;
-            })
-            ->values();
+            return $entry;
+        })->toArray();
 
-        $leaderboard = $teams->map(function ($team, $index) use ($currentTeamId) {
-            return [
-                'rank' => $index + 1,
-                'team' => [
-                    'id' => $team->id,
-                    'name' => $team->name,
-                ],
-                'total_score' => $team->score,
-                'solved_count' => $team->solved_count,
-                'last_solve_time' => $team->last_solve_time ? Carbon::parse($team->last_solve_time)->toIso8601String() : null,
-                'is_current_team' => $team->id === $currentTeamId,
-            ];
-        });
-
-        $top10Teams = collect($leaderboard)->take(10);
-        $top10TeamIds = $top10Teams->pluck('team.id');
-
-        $submissions = Submission::whereIn('team_id', $top10TeamIds)
-            ->where('is_correct', true)
-            ->orderBy('created_at')
-            ->get();
-
-        $eventStartTime = $activeEvent->start_time ? Carbon::parse($activeEvent->start_time)->toIso8601String() : null;
-
-        // Predefined distinct colors for top 10 teams
-        $colors = [
-            '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e',
-            '#06b6d4', '#3b82f6', '#6366f1', '#a855f7', '#ec4899',
-        ];
-
-        $graphData = [];
-
-        foreach ($top10Teams as $index => $entry) {
-            $teamId = $entry['team']['id'];
-            $teamSubmissions = $submissions->where('team_id', $teamId);
-
-            $dataPoints = [];
-
-            if ($eventStartTime) {
-                $dataPoints[] = [
-                    'x' => $eventStartTime,
-                    'y' => 0,
-                ];
-            }
-
-            $cumulativeScore = 0;
-            foreach ($teamSubmissions as $sub) {
-                $cumulativeScore += $sub->points_awarded;
-                $dataPoints[] = [
-                    'x' => $sub->created_at->toIso8601String(),
-                    'y' => $cumulativeScore,
-                ];
-            }
-
-            if (! empty($dataPoints)) {
-                $dataPoints[] = [
-                    'x' => now()->toIso8601String(),
-                    'y' => $cumulativeScore,
-                ];
-            }
-
-            $graphData[] = [
-                'team_id' => $teamId,
-                'team_name' => $entry['team']['name'],
-                'color' => $colors[$index % count($colors)],
-                'data' => $dataPoints,
-            ];
-        }
+        $graphData = $cachedData['graphData'];
 
         return Inertia::render('competition/Leaderboard', [
             'leaderboard' => $leaderboard,

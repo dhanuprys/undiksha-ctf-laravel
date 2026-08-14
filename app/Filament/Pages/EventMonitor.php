@@ -32,7 +32,7 @@ class EventMonitor extends Dashboard
                     ->label('Pilih Event')
                     ->options(Event::pluck('name', 'id'))
                     ->searchable()
-                    ->default(fn () => Event::where('is_active', true)->first()?->id ?? Event::latest()->first()?->id),
+                    ->default(fn () => Event::getActiveEvent()?->id ?? Event::latest()->first()?->id),
             ]);
     }
 

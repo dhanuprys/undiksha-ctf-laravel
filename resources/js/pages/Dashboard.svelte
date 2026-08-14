@@ -200,10 +200,13 @@
                 </CardHeader>
                 <CardContent class="pb-6">
                     <div class="flex items-baseline gap-1.5">
-                        <h3 class="text-5xl font-black tracking-tight text-foreground">
+                        <h3
+                            class="text-5xl font-black tracking-tight text-foreground"
+                        >
                             {stats.total_points}
                         </h3>
-                        <span class="text-sm font-semibold text-muted-foreground"
+                        <span
+                            class="text-sm font-semibold text-muted-foreground"
                             >pts</span
                         >
                     </div>
@@ -227,9 +230,16 @@
                             class="text-2xl font-bold text-muted-foreground/50"
                             >#</span
                         >
-                        <h3 class="text-5xl font-black tracking-tight text-foreground">
+                        <h3
+                            class="text-5xl font-black tracking-tight text-foreground"
+                        >
                             {stats.rank}
                         </h3>
+                    </div>
+                    <div
+                        class="mt-2 text-[10px] font-medium text-muted-foreground/60 italic"
+                    >
+                        *Diperbarui setiap 60 detik
                     </div>
                 </CardContent>
             </Card>
@@ -248,7 +258,9 @@
                 <CardContent class="pb-6">
                     <div class="flex items-end justify-between mb-3 mt-1">
                         <div class="flex items-baseline gap-1.5">
-                            <h3 class="text-4xl font-black tracking-tight text-foreground">
+                            <h3
+                                class="text-4xl font-black tracking-tight text-foreground"
+                            >
                                 {stats.solved_count}
                             </h3>
                             <span
@@ -279,24 +291,42 @@
                     <CardHeader
                         class="pb-4 pt-5 border-b border-border/40 bg-muted/5 shrink-0"
                     >
-                        <CardTitle class="flex items-center gap-2 text-xl font-bold text-foreground">
+                        <CardTitle
+                            class="flex items-center gap-2 text-xl font-bold text-foreground"
+                        >
                             <Calendar class="h-5 w-5 text-primary" />
                             Jadwal Kompetisi
                         </CardTitle>
                     </CardHeader>
                     <CardContent class="p-6">
                         <div class="grid gap-6 sm:grid-cols-2 relative">
-                            <div class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors">
+                            <div
+                                class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors"
+                            >
                                 <div class="flex items-center gap-4 mb-5">
-                                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
+                                    <div
+                                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400"
+                                    >
                                         <Play class="h-5 w-5 ml-0.5" />
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="text-[10px] font-extrabold text-muted-foreground/80 uppercase tracking-widest mb-0.5">Waktu Dimulai</p>
-                                        <p class="text-sm font-semibold text-foreground truncate">{formatDateTime(activeEvent.start_time)}</p>
+                                        <p
+                                            class="text-[10px] font-extrabold text-muted-foreground/80 uppercase tracking-widest mb-0.5"
+                                        >
+                                            Waktu Dimulai
+                                        </p>
+                                        <p
+                                            class="text-sm font-semibold text-foreground truncate"
+                                        >
+                                            {formatDateTime(
+                                                activeEvent.start_time,
+                                            )}
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="bg-background rounded-xl p-3 border border-border/40 shadow-sm">
+                                <div
+                                    class="bg-background rounded-xl p-3 border border-border/40 shadow-sm"
+                                >
                                     <CountdownTimer
                                         targetDate={activeEvent.start_time}
                                         label="Dimulai Dalam"
@@ -305,17 +335,33 @@
                                 </div>
                             </div>
 
-                            <div class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors">
+                            <div
+                                class="relative z-10 rounded-2xl bg-muted/20 p-5 border border-border/50 hover:bg-muted/30 transition-colors"
+                            >
                                 <div class="flex items-center gap-4 mb-5">
-                                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
+                                    <div
+                                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
+                                    >
                                         <Target class="h-5 w-5" />
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="text-[10px] font-extrabold text-muted-foreground/80 uppercase tracking-widest mb-0.5">Waktu Berakhir</p>
-                                        <p class="text-sm font-semibold text-foreground truncate">{formatDateTime(activeEvent.end_time)}</p>
+                                        <p
+                                            class="text-[10px] font-extrabold text-muted-foreground/80 uppercase tracking-widest mb-0.5"
+                                        >
+                                            Waktu Berakhir
+                                        </p>
+                                        <p
+                                            class="text-sm font-semibold text-foreground truncate"
+                                        >
+                                            {formatDateTime(
+                                                activeEvent.end_time,
+                                            )}
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="bg-background rounded-xl p-3 border border-border/40 shadow-sm">
+                                <div
+                                    class="bg-background rounded-xl p-3 border border-border/40 shadow-sm"
+                                >
                                     <CountdownTimer
                                         targetDate={activeEvent.end_time}
                                         label="Sisa Waktu"
@@ -337,7 +383,9 @@
                         class="pb-4 border-b border-border/40 bg-muted/5"
                     >
                         <div class="flex items-center justify-between">
-                            <CardTitle class="flex items-center gap-2 text-lg font-bold text-foreground">
+                            <CardTitle
+                                class="flex items-center gap-2 text-lg font-bold text-foreground"
+                            >
                                 <Activity class="h-5 w-5 text-primary" />
                                 Aktivitas Terakhir
                             </CardTitle>
@@ -388,13 +436,15 @@
                                                     <span
                                                         class="shrink-0 inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-500/10 rounded border border-green-500/20 whitespace-nowrap"
                                                     >
-                                                        +{submission.points_awarded ?? 0} pts
+                                                        +{submission.points_awarded ??
+                                                            0} pts
                                                     </span>
                                                 {:else}
                                                     <span
                                                         class="shrink-0 inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400 bg-red-500/10 rounded border border-red-500/20 whitespace-nowrap"
                                                     >
-                                                        {submission.points_awarded ?? 0} pts
+                                                        {submission.points_awarded ??
+                                                            0} pts
                                                     </span>
                                                 {/if}
                                             </div>
@@ -414,15 +464,29 @@
                                                 <div
                                                     class="flex items-center gap-2"
                                                 >
-                                                    <div class="flex items-center gap-1.5">
-                                                        <User class="h-3 w-3" />
-                                                        <span class="truncate max-w-[100px]" title={submission.user?.name ?? 'Sistem'}>{submission.user?.name ?? 'Sistem'}</span>
-                                                    </div>
-                                                    <div class="h-1.5 w-1.5 rounded-full bg-muted-foreground/30"></div>
                                                     <div
                                                         class="flex items-center gap-1.5"
                                                     >
-                                                        <Clock class="h-3 w-3" />
+                                                        <User class="h-3 w-3" />
+                                                        <span
+                                                            class="truncate max-w-[100px]"
+                                                            title={submission
+                                                                .user?.name ??
+                                                                'Sistem'}
+                                                            >{submission.user
+                                                                ?.name ??
+                                                                'Sistem'}</span
+                                                        >
+                                                    </div>
+                                                    <div
+                                                        class="h-1.5 w-1.5 rounded-full bg-muted-foreground/30"
+                                                    ></div>
+                                                    <div
+                                                        class="flex items-center gap-1.5"
+                                                    >
+                                                        <Clock
+                                                            class="h-3 w-3"
+                                                        />
                                                         <span
                                                             >{formatTime(
                                                                 submission.created_at,

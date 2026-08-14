@@ -89,7 +89,10 @@
     <div class="mb-8">
         <h1 class="text-3xl font-bold tracking-tight">Papan Peringkat</h1>
         <p class="text-muted-foreground">
-            Peringkat tim berdasarkan total poin.
+            Peringkat tim berdasarkan total poin. <span
+                class="italic text-xs ml-1 opacity-70"
+                >*Diperbarui setiap 60 detik</span
+            >
         </p>
     </div>
 
@@ -116,24 +119,39 @@
                         <div
                             class={`flex flex-col items-center p-6 rounded-2xl border transition-colors ${getRankStyle(entry.rank)} ${entry.is_current_team ? 'ring-2 ring-primary/50' : ''}`}
                         >
-                            <div class="text-4xl mb-3">{getRankLabel(entry.rank)}</div>
-                            <h3 class={`font-bold text-xl text-center truncate w-full mb-1 ${entry.is_current_team ? 'text-primary' : 'text-foreground'}`}>
+                            <div class="text-4xl mb-3">
+                                {getRankLabel(entry.rank)}
+                            </div>
+                            <h3
+                                class={`font-bold text-xl text-center truncate w-full mb-1 ${entry.is_current_team ? 'text-primary' : 'text-foreground'}`}
+                            >
                                 {entry.team.name}
                             </h3>
-                            
+
                             {#if entry.is_current_team}
-                                <span class="mb-3 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                                <span
+                                    class="mb-3 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary"
+                                >
                                     Tim Anda
                                 </span>
                             {:else}
-                                <div class="h-6 mb-3"></div> <!-- Spacer to keep heights aligned -->
+                                <div class="h-6 mb-3"></div>
+                                <!-- Spacer to keep heights aligned -->
                             {/if}
 
-                            <div class="text-4xl font-black text-foreground mt-2">
-                                {entry.total_score} <span class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">pts</span>
+                            <div
+                                class="text-4xl font-black text-foreground mt-2"
+                            >
+                                {entry.total_score}
+                                <span
+                                    class="text-sm font-semibold text-muted-foreground uppercase tracking-wider"
+                                    >pts</span
+                                >
                             </div>
 
-                            <div class="flex items-center justify-center gap-4 mt-5 text-sm text-muted-foreground w-full border-t border-border/50 pt-4">
+                            <div
+                                class="flex items-center justify-center gap-4 mt-5 text-sm text-muted-foreground w-full border-t border-border/50 pt-4"
+                            >
                                 <span class="flex items-center gap-1.5">
                                     <Trophy class="h-4 w-4" />
                                     {entry.solved_count} soal

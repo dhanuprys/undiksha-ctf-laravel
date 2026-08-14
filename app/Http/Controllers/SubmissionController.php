@@ -17,7 +17,7 @@ class SubmissionController extends Controller
     public function store(SubmitFlagRequest $request)
     {
         $user = $request->user();
-        $activeEvent = Event::where('is_active', true)->first();
+        $activeEvent = Event::getActiveEvent();
 
         if (! $activeEvent) {
             return back()->with('flash', [

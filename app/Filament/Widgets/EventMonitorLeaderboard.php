@@ -42,8 +42,7 @@ class EventMonitorLeaderboard extends BaseWidget
                         $query->where('is_correct', true);
                     }], 'created_at')
                     ->orderByRaw('COALESCE(score, 0) DESC')
-                    ->orderBy('last_solve_time', 'ASC')
-                    ->limit(10);
+                    ->orderBy('last_solve_time', 'ASC');
             })
             ->columns([
                 Tables\Columns\TextColumn::make('rank')
@@ -66,6 +65,6 @@ class EventMonitorLeaderboard extends BaseWidget
                     ->dateTime('d M Y, H:i:s')
                     ->placeholder('-'),
             ])
-            ->paginated(false);
+            ->paginated([10, 25, 50, 'all']);
     }
 }

@@ -29,7 +29,6 @@ class LeaderboardWidget extends BaseWidget
                     ->withCount(['submissions as challenges_solved' => fn (Builder $query) => $query->where('is_correct', true)])
                     ->withMax('submissions as last_submission_at', 'created_at')
                     ->orderByDesc('total_score')
-                    ->limit(10)
             )
             ->heading($activeEvent ? "Papan Peringkat - {$activeEvent->name}" : 'Papan Peringkat')
             ->description('Top 10 tim untuk acara aktif saat ini.')

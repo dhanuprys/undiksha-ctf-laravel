@@ -365,6 +365,13 @@
                                                 class="flex items-center text-xs text-muted-foreground mt-2 flex-wrap gap-3"
                                             >
                                                 <div
+                                                    class="flex items-center gap-1.5 bg-muted/50 border border-border/40 px-2 py-0.5 rounded font-mono text-[10px] sm:text-xs text-foreground/80"
+                                                    title="Flag yang dikirim: {submission.submitted_flag}"
+                                                >
+                                                    <KeyRound class="h-3 w-3" />
+                                                    <span class="truncate max-w-[150px] sm:max-w-[300px]">{submission.submitted_flag}</span>
+                                                </div>
+                                                <div
                                                     class="flex items-center gap-1.5"
                                                 >
                                                     <Clock

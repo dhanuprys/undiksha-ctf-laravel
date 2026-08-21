@@ -43,15 +43,16 @@ class Submission extends Model
     {
         parent::boot();
 
-        static::created(function (Submission $submission) {
-            if ($submission->is_correct) {
-                $challenge = $submission->challenge;
-                if ($challenge) {
-                    Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
-                    Cache::forget('leaderboard_event_'.$challenge->event_id);
-                }
+        $clearCache = function (Submission $submission) {
+            $challenge = $submission->challenge;
+            if ($challenge) {
+                Cache::forget('event_'.$challenge->event_id.'_categories_challenges');
+                Cache::forget('leaderboard_event_'.$challenge->event_id);
             }
-        });
+        };
+
+        static::saved($clearCache);
+        static::deleted($clearCache);
     }
 
     public function scopeCorrect(Builder $query): void

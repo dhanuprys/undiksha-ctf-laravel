@@ -37,7 +37,7 @@ class TeamController extends Controller
         $submissions = null;
         if ($team) {
             $submissions = $team->submissions()
-                ->with(['challenge:id,title', 'user:id,name'])
+                ->with(['challenge:id,title,category_id', 'challenge.category:id,name', 'user:id,name'])
                 ->orderByDesc('created_at')
                 ->paginate(10);
         }

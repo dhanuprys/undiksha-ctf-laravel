@@ -340,10 +340,14 @@
                                                 class="flex flex-col sm:flex-row sm:items-center justify-between mb-1 gap-2"
                                             >
                                                 <h4
-                                                    class="font-bold text-sm leading-tight text-foreground group-hover:text-primary transition-colors"
+                                                    class="font-bold text-sm leading-tight text-foreground group-hover:text-primary transition-colors flex items-center gap-2"
                                                 >
-                                                    {submission.challenge
-                                                        ?.title}
+                                                    <span>{submission.challenge?.title}</span>
+                                                    {#if submission.challenge?.category?.name}
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                                            {submission.challenge.category.name}
+                                                        </span>
+                                                    {/if}
                                                 </h4>
                                                 {#if submission.is_correct}
                                                     <span

@@ -130,6 +130,16 @@
 
     <div class="w-full border-b mb-10"></div>
 
+    {#if status === 'ended'}
+        <div class="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-500 rounded-lg flex items-center gap-3">
+            <Lock class="h-5 w-5 shrink-0" />
+            <div>
+                <h3 class="font-bold">Kompetisi Telah Berakhir</h3>
+                <p class="text-sm opacity-90">Anda masih dapat melihat daftar tantangan, namun pengiriman flag telah ditutup.</p>
+            </div>
+        </div>
+    {/if}
+
     {#if status === 'not_started'}
         <div
             class="flex h-64 items-center justify-center rounded-xl border border-dashed border-border text-center"
@@ -157,21 +167,6 @@
                         >
                     </div>
                 {/if}
-            </div>
-        </div>
-    {:else if status === 'ended'}
-        <div
-            class="flex h-64 items-center justify-center rounded-xl border border-dashed border-border text-center"
-        >
-            <div class="max-w-md">
-                <Lock class="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 class="mb-2 text-lg font-semibold">
-                    Kompetisi Telah Berakhir
-                </h3>
-                <p class="text-sm text-muted-foreground">
-                    Waktu kompetisi sudah habis. Terima kasih atas partisipasi
-                    Anda!
-                </p>
             </div>
         </div>
     {:else if status === 'no_team'}

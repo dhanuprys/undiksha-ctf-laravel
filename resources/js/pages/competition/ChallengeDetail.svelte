@@ -14,6 +14,7 @@
         Terminal,
         Users,
         FolderOpen,
+        Lock,
     } from 'lucide-svelte';
     import AppHead from '@/components/AppHead.svelte';
     import DifficultyBadge from '@/components/DifficultyBadge.svelte';
@@ -30,8 +31,10 @@
 
     let {
         challenge,
+        is_event_ended = false,
     }: {
         challenge: Challenge;
+        is_event_ended?: boolean;
     } = $props();
 
     // Update breadcrumb on mount or when challenge changes
@@ -252,23 +255,33 @@
                                 </div>
                             </div>
                         {:else}
-                            <div class="space-y-6">
-                                <div
-                                    class="rounded-lg bg-muted/40 p-4 border border-border/50 text-sm text-muted-foreground space-y-2"
-                                >
-                                    <p>
-                                        Masukkan flag yang Anda temukan untuk
-                                        mendapatkan poin.
-                                    </p>
-                                    <p class="text-xs">
-                                        Format: <code
-                                            class="px-1.5 py-0.5 rounded bg-background border border-border/60 font-mono text-foreground font-semibold"
-                                            >CTF&#123;...&#125;</code
-                                        >
-                                    </p>
+                            {#if is_event_ended}
+                                <div class="space-y-6">
+                                    <div class="rounded-lg bg-yellow-500/10 p-4 border border-yellow-500/20 text-sm text-yellow-600 dark:text-yellow-500 space-y-2 text-center">
+                                        <Lock class="h-8 w-8 mx-auto mb-2 opacity-80" />
+                                        <p class="font-bold">Kompetisi Telah Berakhir</p>
+                                        <p>Waktu kompetisi sudah habis. Anda tidak dapat lagi mengirimkan flag untuk tantangan ini.</p>
+                                    </div>
                                 </div>
-                                <FlagSubmitForm challengeId={challenge.id} />
-                            </div>
+                            {:else}
+                                <div class="space-y-6">
+                                    <div
+                                        class="rounded-lg bg-muted/40 p-4 border border-border/50 text-sm text-muted-foreground space-y-2"
+                                    >
+                                        <p>
+                                            Masukkan flag yang Anda temukan untuk
+                                            mendapatkan poin.
+                                        </p>
+                                        <p class="text-xs">
+                                            Format: <code
+                                                class="px-1.5 py-0.5 rounded bg-background border border-border/60 font-mono text-foreground font-semibold"
+                                                >CTF&#123;...&#125;</code
+                                            >
+                                        </p>
+                                    </div>
+                                    <FlagSubmitForm challengeId={challenge.id} />
+                                </div>
+                            {/if}
                         {/if}
                     </CardContent>
                 </Card>

@@ -43,13 +43,8 @@ class ChallengeController extends Controller
             ]);
         }
 
-        // Event has ended
-        if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
-            return Inertia::render('competition/Challenges', [
-                'categories' => [],
-                'status' => 'ended',
-            ]);
-        }
+        // Check if event has ended
+        $isEventEnded = $activeEvent->end_time && now()->gt($activeEvent->end_time);
 
         // Event has not started yet
         if (! $activeEvent->start_time || now()->lt($activeEvent->start_time)) {
@@ -117,7 +112,7 @@ class ChallengeController extends Controller
 
         return Inertia::render('competition/Challenges', [
             'categories' => $categories,
-            'status' => 'active',
+            'status' => $isEventEnded ? 'ended' : 'active',
         ]);
     }
 
@@ -134,9 +129,7 @@ class ChallengeController extends Controller
             return redirect()->route('dashboard')->with('error', 'Kompetisi belum dimulai.');
         }
 
-        if ($activeEvent->end_time && now()->gt($activeEvent->end_time)) {
-            return redirect()->route('dashboard')->with('error', 'Kompetisi sudah berakhir.');
-        }
+        $isEventEnded = $activeEvent->end_time && now()->gt($activeEvent->end_time);
 
         $currentTeam = $user->teams()->where('event_id', $activeEvent->id)->first();
         if (! $currentTeam) {
@@ -171,7 +164,7 @@ class ChallengeController extends Controller
             return [
                 'id' => $attachment->id,
                 'file_name' => $attachment->file_name,
-                'download_url' => URL::temporarySignedRoute(
+                'download_url' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
                     'attachments.download', now()->addHours(2), ['attachment' => $attachment->id]
                 ),
             ];
@@ -179,6 +172,7 @@ class ChallengeController extends Controller
 
         return Inertia::render('competition/ChallengeDetail', [
             'challenge' => $challenge,
+            'is_event_ended' => $isEventEnded,
         ]);
     }
 }
